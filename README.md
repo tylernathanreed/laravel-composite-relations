@@ -1,4 +1,4 @@
-# Laravel Relation Joins
+# Laravel Composite Relations
 
 [![Latest Stable Version](https://poser.pugx.org/reedware/laravel-composite-relations/v)](//packagist.org/packages/reedware/laravel-composite-relations)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-composite-relations/downloads)](//packagist.org/packages/reedware/laravel-composite-relations)
@@ -120,3 +120,15 @@ class TaskImportSummary extends Models
     }
 }
 ```
+
+### 3. Joining through Composite Relations
+
+This package is compatible with [reedware/laravel-relation-joins](https://github.com/tylernathanreed/laravel-relation-joins), meaning you can join through composite relations just like anything else:
+
+```php
+$task->joinRelation('importSummary', function($join) {
+    $join->where('task_import_summaries.name', 'like', '%Relation joins are cool!%');
+});
+```
+
+You must separately include [reedware/laravel-relation-joins](https://github.com/tylernathanreed/laravel-relation-joins) for this to work.
