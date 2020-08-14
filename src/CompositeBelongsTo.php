@@ -284,11 +284,9 @@ class CompositeBelongsTo extends Relation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        return $query->select($columns)->where(function($query) {
-            foreach($this->getQualifiedForeignKeyNames() as $index => $foreignKey) {
-                $query->whereColumn($foreignKey, '=', $query->qualifyColumn($this->ownerKeys[$index]));
-            }
-        });
+        return $query->select($columns)->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function($ownerKey) use ($query) {
+            return $query->qualifyColumn($ownerKey);
+        }, $this->ownerKeys)));
     }
 
     /**
@@ -307,11 +305,37 @@ class CompositeBelongsTo extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->where(function($query) {
-            foreach($this->getQualifiedForeignKeyNames() as $index => $foreignKey) {
-                $query->whereColumn($hash.'.'.$this->ownerKeys[$index], '=', $foreignKey);
-            }
-        });
+        return $query->whereColumn(array_combine(array_map(function($ownerKey) {
+            return $hash.'.'.$ownerKey;
+        }, $this->ownerKeys), $this->getQualifiedForeignKeyNames()));
+    }
+
+    /**
+     * Adds the constraints for a relationship join.
+     *
+     * @link https://github.com/tylernathanreed/laravel-relation-joins
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  string  $type
+     * @param  string|null  $alias
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationJoinQuery(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    {
+        if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
+            $alias = $this->getRelationCountHash();
+        }
+
+        if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
+            $query->from($query->getModel()->getTable().' as '.$alias);
+
+            $query->getModel()->setTable($alias);
+        }
+
+        return $query->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function($ownerKey) use ($query) {
+            return $query->qualifyColumn($ownerKey);
+        }, $this->ownerKeys)));
     }
 
     /**

@@ -135,12 +135,12 @@ trait HasCompositeRelations
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (empty($foreignKeys)) {
-            $foreignKeys = array_map(function($keyName) {
-                return Str::snake($relation).'_'.$keyName();
+            $foreignKeys = array_map(function($keyName) use ($relation) {
+                return Str::snake($relation).'_'.$keyName;
             }, $instance->getKeyNames());
         }
 
-        $ownerKeys = $ownerKeys ?: $this->getKeyNames();
+        $ownerKeys = $ownerKeys ?: $instance->getKeyNames();
 
         return $this->newCompositeBelongsTo(
             $instance->newQuery(), $this, $foreignKeys, $ownerKeys, $relation

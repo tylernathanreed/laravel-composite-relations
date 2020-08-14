@@ -412,6 +412,38 @@ abstract class CompositeHasOneOrMany extends Relation
     }
 
     /**
+     * Adds the constraints for a relationship join.
+     *
+     * @link https://github.com/tylernathanreed/laravel-relation-joins
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
+     * @param  string  $type
+     * @param  string|null  $alias
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRelationJoinQuery(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
+    {
+        if (is_null($alias) && $query->getQuery()->from == $parentQuery->getQuery()->from) {
+            $alias = $this->getRelationCountHash();
+        }
+
+        if (! is_null($alias) && $alias != $query->getModel()->getTable()) {
+            $query->from($query->getModel()->getTable().' as '.$alias);
+
+            $query->getModel()->setTable($alias);
+        }
+
+        return $query->where(function($query) {
+            $foreignKeys = $this->getForeignKeyNames();
+
+            foreach($this->getQualifiedParentKeyNames() as $index => $parentKey) {
+                $query->whereColumn($query->qualifyColumn($foreignKeys[$index]), '=', $parentKey);
+            }
+        });
+    }
+
+    /**
      * Get a relationship join table hash.
      *
      * @return string
