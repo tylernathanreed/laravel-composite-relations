@@ -1,7 +1,7 @@
 # Laravel Relation Joins
 
-[![Latest Stable Version](https://poser.pugx.org/reedware/laravel-composite-relations/v/stable)](https://packagist.org/packages/reedware/laravel-composite-relations)
-[![Total Downloads](https://poser.pugx.org/reedware/laravel-composite-relations/downloads)](https://packagist.org/packages/reedware/laravel-composite-relations)
+[![Latest Stable Version](https://poser.pugx.org/reedware/laravel-composite-relations/v)](//packagist.org/packages/reedware/laravel-composite-relations)
+[![Total Downloads](https://poser.pugx.org/reedware/laravel-composite-relations/downloads)](//packagist.org/packages/reedware/laravel-composite-relations)
 [![Laravel Version](https://img.shields.io/badge/Laravel-5.5%2B-blue)](https://laravel.com/)
 [![Build Status](https://travis-ci.com/tylernathanreed/laravel-composite-relations.svg?branch=master)](https://travis-ci.com/tylernathanreed/laravel-composite-relations)
 
