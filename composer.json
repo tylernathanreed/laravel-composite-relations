@@ -27,12 +27,5 @@
         "psr-4": {
             "Reedware\\LaravelCompositeRelations\\Tests\\": "tests/"
         }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Reedware\\LaravelCompositeRelations\\LaravelCompositeRelationServiceProvider"
-            ]
-        }
     }
 }
