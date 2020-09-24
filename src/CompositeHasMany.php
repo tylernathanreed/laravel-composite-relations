@@ -13,7 +13,7 @@ class CompositeHasMany extends CompositeHasOneOrMany
      */
     public function getResults()
     {
-        return ! is_null($this->getParentKey())
+        return ! empty(array_filter($this->getParentKeys()))
                 ? $this->query->get()
                 : $this->related->newCollection();
     }
