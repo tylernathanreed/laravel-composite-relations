@@ -20,7 +20,7 @@ class DatabaseEloquentHasOneTest extends TestCase
         $this->setUpDatabase();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
 
