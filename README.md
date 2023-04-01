@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/reedware/laravel-composite-relations/v)](//packagist.org/packages/reedware/laravel-composite-relations)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-composite-relations/downloads)](//packagist.org/packages/reedware/laravel-composite-relations)
-[![Laravel Version](https://img.shields.io/badge/Laravel-6.x--8.x%2B-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-8.x--10.x%2B-blue)](https://laravel.com/)
 [![Build Status](https://github.com/tylernathanreed/laravel-composite-relations/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions)
 
 This package adds the ability to join on a relationship by name.
