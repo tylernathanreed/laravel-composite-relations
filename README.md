@@ -30,7 +30,7 @@ composer require reedware/laravel-composite-relations
 
 #### Versioning
 
-This package currently only supports Laravel 5.5, but future support will eventually be added.
+This package supports Laravel 8.x to 10.x. for older versions of Laravel, check out the 2.x and 1.x releases of this package.
 
 #### Code Changes
 
