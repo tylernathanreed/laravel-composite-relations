@@ -5,7 +5,7 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-8.x--10.x%2B-blue)](https://laravel.com/)
 [![Build Status](https://github.com/tylernathanreed/laravel-composite-relations/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions)
 
-This package adds the ability to join on a relationship by name.
+This package adds the ability to have multiple foreign keys in a relation.
 
 ## Introduction
 
