@@ -256,6 +256,31 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
     }
 
+    public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
+    {
+        $relation = Relation::noConstraints(function() {
+            return $this->getRelation(null, 'and');
+        });
+
+        $models = [
+            new EloquentTaskModelStub,
+            new EloquentTaskModelStub,
+            new EloquentTaskModelStub
+        ];
+
+        $models[0]->vendor_id = 'ABC-001';
+        $models[0]->vendor_name = 'ABC';
+        $models[1]->vendor_id = 'ABC-001';
+        $models[1]->vendor_name = 'ABC';
+        $models[2]->vendor_id = 0;
+        $models[2]->vendor_name = 'XYZ';
+
+        $relation->addEagerConstraints($models);
+
+        $this->assertEquals('select * from "task_import_data" where (("task_vendor_id" = ? and "task_vendor_name" = ?) or ("task_vendor_id" = ? and "task_vendor_name" = ?))', $relation->getQuery()->toSql());
+        $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
+    }
+
     public function testModelsAreProperlyMatchedToParents()
     {
         $relation = $this->getRelation();
@@ -327,7 +352,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('peas', $instances[1]->data_value);
     }
 
-    protected function getRelation($parent = null)
+    protected function getRelation($parent = null, $glue = 'or')
     {
         $related = new EloquentTaskModelStub;
 
@@ -343,6 +368,6 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
         }
 
-        return new CompositeHasMany($builder, $parent, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name']);
+        return new CompositeHasMany($builder, $parent, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name'], $glue);
     }
 }

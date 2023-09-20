@@ -9,13 +9,13 @@ class EloquentTaskImportSummaryModelStub extends EloquentCompositeRelationModelS
 {
     protected $table = 'task_import_summaries';
 
-    public function task()
+    public function task($glue = 'or')
     {
-        return $this->compositeBelongsTo(Task::class, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name']);
+        return $this->compositeBelongsTo(Task::class, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name'], null, $glue);
     }
 
-    public function importData()
+    public function importData($glue = 'or')
     {
-        return $this->compositeHasMany(TaskImportData::class, ['task_vendor_id', 'task_vendor_name'], ['task_vendor_id', 'task_vendor_name']);
+        return $this->compositeHasMany(TaskImportData::class, ['task_vendor_id', 'task_vendor_name'], ['task_vendor_id', 'task_vendor_name'], $glue);
     }
 }

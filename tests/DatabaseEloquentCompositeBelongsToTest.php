@@ -98,6 +98,24 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(['ABC-123', 'ABC', 'XYZ-123', 'XYZ'], $relation->getQuery()->getBindings());
     }
 
+    public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
+    {
+        $relation = Relation::noConstraints(function() {
+            return $this->getRelation(null, 'and');
+        });
+
+        $stubs = [
+            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
+            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
+            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'XYZ-123', 'task_vendor_name' => 'XYZ'])
+        ];
+
+        $relation->addEagerConstraints($stubs);
+
+        $this->assertEquals('select * from "tasks" where (("tasks"."vendor_id" = ? and "tasks"."vendor_name" = ?) or ("tasks"."vendor_id" = ? and "tasks"."vendor_name" = ?))', $relation->getQuery()->toSql());
+        $this->assertEquals(['ABC-123', 'ABC', 'XYZ-123', 'XYZ'], $relation->getQuery()->getBindings());
+    }
+
     public function testIdsInEagerConstraintsCanBeZero()
     {
         $relation = Relation::noConstraints(function() {
@@ -196,14 +214,14 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $relation->associate(['XYZ-123', 'XYZ']);
     }
 
-    protected function getRelation($child = null, $incrementing = true, $keyType = 'int')
+    protected function getRelation($child = null, $glue = 'or')
     {
         if(is_null($child)) {
-            return (new EloquentTaskImportSummaryModelStub)->task();
+            return (new EloquentTaskImportSummaryModelStub)->task($glue);
         }
 
         return new CompositeBelongsTo(
-            (new EloquentTaskModelStub)->newQuery(), $child, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name'], 'relation'
+            (new EloquentTaskModelStub)->newQuery(), $child, ['task_vendor_id', 'task_vendor_name'], ['vendor_id', 'vendor_name'], 'relation', $glue
         );
     }
 }
