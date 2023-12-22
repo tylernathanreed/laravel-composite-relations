@@ -132,3 +132,34 @@ $task->joinRelation('importSummary', function($join) {
 ```
 
 You must separately include [reedware/laravel-relation-joins](https://github.com/tylernathanreed/laravel-relation-joins) for this to work.
+
+### 4. Using composite `and` glue
+
+
+The default glue between composite keys is `'or'`. Meaning your query will be like:
+```sql
+where (("foreign_1" = ? or "foreign_2" = ?) or ("foreign_1" = ? or "foreign_2" = ?))
+```
+
+You can change that by passing `'and'` for the glue parameter:
+```php
+public function myCompositeBelongsToRelation()
+{
+    return $this->compositeBelongsTo(MyRelated::class, ['local_1', 'local_2'], ['foreign_1', 'foreign_2'], null, 'and');
+}
+
+public function myCompositeHasOneRelation()
+{
+    return $this->compositeHasOne(MyRelated::class, ['foreign_1', 'foreign_2'], ['local_1', 'local_2'], 'and');
+}
+
+public function myCompositeHasManyRelation()
+{
+    return $this->compositeHasMany(MyRelated::class, ['foreign_1', 'foreign_2'], ['local_1', 'local_2'], 'and');
+}
+```
+
+Giving this result :
+```sql
+where (("foreign_1" = ? and "foreign_2" = ?) or ("foreign_1" = ? and "foreign_2" = ?))
+```

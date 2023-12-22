@@ -24,6 +24,13 @@ abstract class CompositeHasOneOrMany extends Relation
     protected $localKeys;
 
     /**
+     * The glue between each composite keys when making the query.
+     *
+     * @var array
+     */
+    protected $compositeGlue;
+
+    /**
      * The count of self joins.
      *
      * @var int
@@ -39,10 +46,15 @@ abstract class CompositeHasOneOrMany extends Relation
      * @param  array  $localKeys
      * @return void
      */
-    public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys)
+    public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
         $this->localKeys = $localKeys;
         $this->foreignKeys = $foreignKeys;
+        $glue = strtolower($glue);
+        if (!in_array($glue, ['and', 'or'])) {
+            throw new \InvalidArgumentException('The glue must be either "and" or "or".');
+        }
+        $this->compositeGlue = $glue;
 
         parent::__construct($query, $parent);
     }
@@ -118,7 +130,15 @@ abstract class CompositeHasOneOrMany extends Relation
                 }
 
                 // Add an "or where" clause for each key pairing
-                $query->orWhere($mapping);
+                if ($this->compositeGlue === 'and') {
+                    $query->orWhere(function($query) use($mapping) {
+                        foreach($mapping as $foreignKey => $localKey) {
+                            $query->where($foreignKey, '=', $localKey);
+                        }
+                    });
+                } else {
+                    $query->orWhere($mapping);
+                }
 
                 // To prevent the same entry from appearing multiple times within the sql, we are
                 // going to keep track of the combinations that we've already added, and ensure

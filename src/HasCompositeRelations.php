@@ -80,9 +80,10 @@ trait HasCompositeRelations
      * @param  string  $related
      * @param  array|null  $foreignKeys
      * @param  array|null  $localKeys
+     * @param  string|null  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasOne
      */
-    public function compositeHasOne($related, array $foreignKeys = null, array $localKeys = null)
+    public function compositeHasOne($related, array $foreignKeys = null, array $localKeys = null, $glue = 'or')
     {
         $instance = $this->newRelatedInstance($related);
 
@@ -94,7 +95,7 @@ trait HasCompositeRelations
             return $instance->getTable().'.'.$foreignKey;
         }, $foreignKeys);
 
-        return $this->newCompositeHasOne($instance->newQuery(), $this, $foreignKeys, $localKeys);
+        return $this->newCompositeHasOne($instance->newQuery(), $this, $foreignKeys, $localKeys, $glue);
     }
 
     /**
@@ -104,11 +105,12 @@ trait HasCompositeRelations
      * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  array  $foreignKeys
      * @param  array  $localKeys
+     * @param  string $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasOne
      */
-    protected function newCompositeHasOne(Builder $query, Model $parent, array $foreignKeys, array $localKeys)
+    protected function newCompositeHasOne(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
-        return new CompositeHasOne($query, $parent, $foreignKeys, $localKeys);
+        return new CompositeHasOne($query, $parent, $foreignKeys, $localKeys, $glue);
     }
 
     /**
@@ -118,9 +120,10 @@ trait HasCompositeRelations
      * @param  array|null  $foreignKeys
      * @param  array|null  $ownerKeys
      * @param  string      $relation
+     * @param  string      $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeBelongsTo
      */
-    public function compositeBelongsTo($related, array $foreignKeys = null, array $ownerKeys = null, $relation = null)
+    public function compositeBelongsTo($related, array $foreignKeys = null, array $ownerKeys = null, $relation = null, $glue = 'or')
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
@@ -143,7 +146,7 @@ trait HasCompositeRelations
         $ownerKeys = $ownerKeys ?: $instance->getKeyNames();
 
         return $this->newCompositeBelongsTo(
-            $instance->newQuery(), $this, $foreignKeys, $ownerKeys, $relation
+            $instance->newQuery(), $this, $foreignKeys, $ownerKeys, $relation, $glue
         );
     }
 
@@ -155,11 +158,12 @@ trait HasCompositeRelations
      * @param  array  $foreignKeys
      * @param  array  $ownerKeys
      * @param  string  $relation
+     * @param  string  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeBelongsTo
      */
-    protected function newCompositeBelongsTo(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relation)
+    protected function newCompositeBelongsTo(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relation, $glue)
     {
-        return new CompositeBelongsTo($query, $child, $foreignKeys, $ownerKeys, $relation);
+        return new CompositeBelongsTo($query, $child, $foreignKeys, $ownerKeys, $relation, $glue);
     }
 
     /**
@@ -180,9 +184,10 @@ trait HasCompositeRelations
      * @param  string      $related
      * @param  array|null  $foreignKeys
      * @param  array|null  $localKeys
+     * @param  string|null $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasMany
      */
-    public function compositeHasMany($related, array $foreignKeys = null, array $localKeys = null)
+    public function compositeHasMany($related, array $foreignKeys = null, array $localKeys = null, $glue = 'or')
     {
         $instance = $this->newRelatedInstance($related);
 
@@ -195,7 +200,7 @@ trait HasCompositeRelations
         }, $foreignKeys);
 
         return $this->newCompositeHasMany(
-            $instance->newQuery(), $this, $foreignKeys, $localKeys
+            $instance->newQuery(), $this, $foreignKeys, $localKeys, $glue
         );
     }
 
@@ -206,10 +211,11 @@ trait HasCompositeRelations
      * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @param  array  $foreignKeys
      * @param  array  $localKeys
+     * @param  string  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasMany
      */
-    protected function newCompositeHasMany(Builder $query, Model $parent, array $foreignKeys, array $localKeys)
+    protected function newCompositeHasMany(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
-        return new CompositeHasMany($query, $parent, $foreignKeys, $localKeys);
+        return new CompositeHasMany($query, $parent, $foreignKeys, $localKeys, $glue);
     }
 }

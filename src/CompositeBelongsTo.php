@@ -39,6 +39,13 @@ class CompositeBelongsTo extends Relation
     protected $relationName;
 
     /**
+     * The glue between each composite keys when making the query.
+     *
+     * @var array
+     */
+    protected $compositeGlue;
+
+    /**
      * The count of self joins.
      *
      * @var int
@@ -53,14 +60,20 @@ class CompositeBelongsTo extends Relation
      * @param  array  $foreignKeys
      * @param  array  $ownerKeys
      * @param  string  $relationName
+     * @param  string  $glue
      *
      * @return void
      */
-    public function __construct(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relationName)
+    public function __construct(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relationName, $glue)
     {
         $this->ownerKeys = $ownerKeys;
         $this->relationName = $relationName;
         $this->foreignKeys = $foreignKeys;
+        $glue = strtolower($glue);
+        if (!in_array($glue, ['and', 'or'])) {
+            throw new \InvalidArgumentException('The glue must be either "and" or "or".');
+        }
+        $this->compositeGlue = $glue;
 
         // In the underlying base relationship class, this variable is referred to as
         // the "parent" since most relationships are not inversed. But, since this
@@ -150,7 +163,15 @@ class CompositeBelongsTo extends Relation
                 }
 
                 // Add an "or where" clause for each key pairing
-                $query->orWhere($mapping);
+                if ($this->compositeGlue === 'and') {
+                    $query->orWhere(function($query) use($mapping) {
+                        foreach($mapping as $foreignKey => $localKey) {
+                            $query->where($foreignKey, '=', $localKey);
+                        }
+                    });
+                } else {
+                    $query->orWhere($mapping);
+                }
 
                 // To prevent the same entry from appearing multiple times within the sql, we are
                 // going to keep track of the combinations that we've already added, and ensure
