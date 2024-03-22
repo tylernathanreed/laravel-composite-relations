@@ -6,29 +6,28 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use InvalidArgumentException;
 
 abstract class CompositeHasOneOrMany extends Relation
 {
     /**
      * The foreign key of the parent model.
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $foreignKeys;
+    protected array $foreignKeys;
 
     /**
      * The local key of the parent model.
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $localKeys;
+    protected array $localKeys;
 
     /**
      * The glue between each composite keys when making the query.
-     *
-     * @var array
      */
-    protected $compositeGlue;
+    protected string $compositeGlue;
 
     /**
      * The count of self joins.
@@ -39,17 +38,17 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Create a new has one or many relationship instance.
-     *
-     * @return void
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
         $this->localKeys = $localKeys;
         $this->foreignKeys = $foreignKeys;
         $glue = strtolower($glue);
+
         if (! in_array($glue, ['and', 'or'])) {
-            throw new \InvalidArgumentException('The glue must be either "and" or "or".');
+            throw new InvalidArgumentException('The glue must be either "and" or "or".');
         }
+
         $this->compositeGlue = $glue;
 
         parent::__construct($query, $parent);
@@ -79,22 +78,18 @@ abstract class CompositeHasOneOrMany extends Relation
         }
 
         $this->query->where(function ($query) {
-
             foreach ($this->getParentKeys() as $index => $parentKey) {
                 $this->query->where($this->foreignKeys[$index], '=', $parentKey);
 
                 $this->query->whereNotNull($this->foreignKeys[$index]);
             }
-
         });
     }
 
     /**
      * Set the constraints for an eager load of the relation.
-     *
-     * @return void
      */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
         $this->query->where(function ($query) use ($models) {
@@ -142,7 +137,6 @@ abstract class CompositeHasOneOrMany extends Relation
                 $mapped[$mappedKey] = true;
 
             }
-
         });
     }
 
@@ -373,13 +367,15 @@ abstract class CompositeHasOneOrMany extends Relation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        return $query->select($columns)->where(function ($query) {
+        $query->select($columns)->where(function ($query) {
             $foreignKeys = $this->getQualifiedForeignKeyNames();
 
             foreach ($this->getQualifiedParentKeyNames() as $index => $parentKey) {
                 $query->whereColumn($parentKey, '=', $foreignKeys[$index]);
             }
         });
+
+        return $query;
     }
 
     /**
@@ -394,13 +390,15 @@ abstract class CompositeHasOneOrMany extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->select($columns)->where(function ($query) use ($hash) {
+        $query->select($columns)->where(function ($query) use ($hash) {
             $foreignKeys = $this->getForeignKeyNames();
 
             foreach ($this->getQualifiedParentKeyNames() as $index => $parentKey) {
                 $query->whereColumn($parentKey, '=', $hash.'.'.$foreignKeys[$index]);
             }
         });
+
+        return $query;
     }
 
     /**
@@ -447,11 +445,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the key value of the parent's local keys.
      *
-     * @return array
+     * @return array<int,mixed>
      */
-    public function getParentKeys()
+    public function getParentKeys(): array
     {
-        return array_map(function ($localKey) {
+        return array_map(function (string $localKey): mixed {
             return $this->parent->getAttribute($localKey);
         }, $this->localKeys);
     }
@@ -459,11 +457,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the fully qualified parent key names.
      *
-     * @return string
+     * @return array<int,string>
      */
-    public function getQualifiedParentKeyNames()
+    public function getQualifiedParentKeyNames(): array
     {
-        return array_map(function ($localKey) {
+        return array_map(function (string $localKey): string {
             return $this->parent->qualifyColumn($localKey);
         }, $this->localKeys);
     }
@@ -471,11 +469,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the plain foreign keys.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getForeignKeyNames()
+    public function getForeignKeyNames(): array
     {
-        return array_map(function ($foreignKey) {
+        return array_map(function (string $foreignKey): string {
             $segments = explode('.', $foreignKey);
 
             return end($segments);

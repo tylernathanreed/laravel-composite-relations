@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use InvalidArgumentException;
 
 class CompositeBelongsTo extends Relation
 {
@@ -20,30 +21,26 @@ class CompositeBelongsTo extends Relation
     /**
      * The foreign keys of the parent model.
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $foreignKeys;
+    protected array $foreignKeys;
 
     /**
      * The associated keys on the parent model.
      *
-     * @var array
+     * @var array<int,string>
      */
-    protected $ownerKeys;
+    protected array $ownerKeys;
 
     /**
      * The name of the relationship.
-     *
-     * @var string
      */
-    protected $relationName;
+    protected string $relationName;
 
     /**
      * The glue between each composite keys when making the query.
-     *
-     * @var array
      */
-    protected $compositeGlue;
+    protected string $compositeGlue;
 
     /**
      * The count of self joins.
@@ -54,20 +51,24 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Create a new belongs to relationship instance.
-     *
-     * @param  string  $relationName
-     * @param  string  $glue
-     * @return void
      */
-    public function __construct(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relationName, $glue)
-    {
+    public function __construct(
+        Builder $query,
+        Model $child,
+        array $foreignKeys,
+        array $ownerKeys,
+        string $relationName,
+        string $glue
+    ) {
         $this->ownerKeys = $ownerKeys;
         $this->relationName = $relationName;
         $this->foreignKeys = $foreignKeys;
         $glue = strtolower($glue);
+
         if (! in_array($glue, ['and', 'or'])) {
-            throw new \InvalidArgumentException('The glue must be either "and" or "or".');
+            throw new InvalidArgumentException('The glue must be either "and" or "or".');
         }
+
         $this->compositeGlue = $glue;
 
         // In the underlying base relationship class, this variable is referred to as
@@ -293,9 +294,16 @@ class CompositeBelongsTo extends Relation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        return $query->select($columns)->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function ($ownerKey) use ($query) {
-            return $query->qualifyColumn($ownerKey);
-        }, $this->ownerKeys)));
+        $query
+            ->select($columns)
+            ->whereColumn(array_combine(
+                $this->getQualifiedForeignKeyNames(),
+                array_map(function ($ownerKey) use ($query) {
+                    return $query->qualifyColumn($ownerKey);
+                }, $this->ownerKeys)
+            ));
+        
+        return $query;
     }
 
     /**
@@ -312,9 +320,14 @@ class CompositeBelongsTo extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->whereColumn(array_combine(array_map(function ($ownerKey) use ($hash) {
-            return $hash.'.'.$ownerKey;
-        }, $this->ownerKeys), $this->getQualifiedForeignKeyNames()));
+        $query->whereColumn(array_combine(
+            array_map(function ($ownerKey) use ($hash) {
+                return $hash.'.'.$ownerKey;
+            }, $this->ownerKeys),
+            $this->getQualifiedForeignKeyNames()
+        ));
+        
+        return $query;
     }
 
     /**
@@ -338,9 +351,14 @@ class CompositeBelongsTo extends Relation
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function ($ownerKey) use ($query) {
-            return $query->qualifyColumn($ownerKey);
-        }, $this->ownerKeys)));
+        $query->whereColumn(array_combine(
+            $this->getQualifiedForeignKeyNames(),
+            array_map(function ($ownerKey) use ($query) {
+                return $query->qualifyColumn($ownerKey);
+            }, $this->ownerKeys))
+        );
+
+        return $query;
     }
 
     /**
