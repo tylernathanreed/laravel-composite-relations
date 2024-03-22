@@ -1,9 +1,10 @@
 # Laravel Composite Relations
 
-[![Latest Stable Version](https://poser.pugx.org/reedware/laravel-composite-relations/v)](//packagist.org/packages/reedware/laravel-composite-relations)
+[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
+[![Tests](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/tests.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/tests.yml)
+[![Lint](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/coding-standards.yml)
+[![Static Analysis](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/static-analysis.yml)
 [![Total Downloads](https://poser.pugx.org/reedware/laravel-composite-relations/downloads)](//packagist.org/packages/reedware/laravel-composite-relations)
-[![Laravel Version](https://img.shields.io/badge/Laravel-8.x--10.x%2B-blue)](https://laravel.com/)
-[![Build Status](https://github.com/tylernathanreed/laravel-composite-relations/workflows/tests/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions)
 
 This package adds the ability to have multiple foreign keys in a relation.
 
@@ -30,7 +31,14 @@ composer require reedware/laravel-composite-relations
 
 #### Versioning
 
-This package supports Laravel 8.x to 10.x. for older versions of Laravel, check out the 2.x and 1.x releases of this package.
+This package is maintained with the latest version of Laravel in mind, but support follows Laravel's [Support Policy](https://laravel.com/docs/master/releases#support-policy).
+
+| Package | Laravel     | PHP        |
+| :-----: | :---------: | :--------: |
+|     4.x | 10.x - 11.x | 8.1 - 8.3+ |
+|     3.x |  8.x - 10.x | 7.2 - 8.0+ |
+|     2.x |  6.x -  8.x | 7.2 - 8.0+ |
+|     1.x |  5.5 -  5.8 | 7.1 - 7.3+ |
 
 #### Code Changes
 
