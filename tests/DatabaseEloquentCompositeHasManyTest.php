@@ -2,11 +2,11 @@
 
 namespace Reedware\LaravelCompositeRelations\Tests;
 
-use Mockery as m;
 use Carbon\Carbon;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 
 class DatabaseEloquentCompositeHasManyTest extends TestCase
@@ -45,7 +45,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
         Carbon::setTestNow($now = Carbon::now());
 
-        $log = $this->db->pretend(function() use (&$instance, $relation) {
+        $log = $this->db->pretend(function () use (&$instance, $relation) {
             $instance = $relation->create(['data_index' => 0, 'data_value' => 'milk']);
         });
 
@@ -136,7 +136,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
         Carbon::setTestNow($now = Carbon::now());
 
-        $log = $this->db->pretend(function() use (&$instance, $relation) {
+        $log = $this->db->pretend(function () use (&$instance, $relation) {
             $instance = $relation->firstOrCreate(['data_index' => 1], ['data_value' => 'carrots']);
         });
 
@@ -233,14 +233,14 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAdded()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation();
         });
 
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -258,14 +258,14 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
         });
 
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -288,7 +288,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $results = [
             new EloquentTaskImportDataModelStub,
             new EloquentTaskImportDataModelStub,
-            new EloquentTaskImportDataModelStub
+            new EloquentTaskImportDataModelStub,
         ];
 
         $results[0]->task_vendor_id = 'ABC-001';
@@ -301,7 +301,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -358,7 +358,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
         $builder = (new EloquentTaskImportDataModelStub)->newQuery();
 
-        if(is_null($parent)) {
+        if (is_null($parent)) {
 
             $parent = m::mock('Illuminate\Database\Eloquent\Model');
             $parent->shouldReceive('getAttribute')->with('vendor_id')->andReturn('ABC-123');

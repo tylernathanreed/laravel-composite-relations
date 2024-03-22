@@ -2,13 +2,12 @@
 
 namespace Reedware\LaravelCompositeRelations\Tests;
 
-use Mockery as m;
-use RuntimeException;
-use Illuminate\Support\Str;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 use Reedware\LaravelRelationJoins\LaravelRelationJoinServiceProvider;
 
@@ -314,7 +313,7 @@ class EloquentRelationJoinModelStub extends Model
 
     public function getForeignKeys()
     {
-        return array_map(function($keyName) {
+        return array_map(function ($keyName) {
             return Str::singular($this->table).'_'.$keyName;
         }, $this->getKeyNames());
     }

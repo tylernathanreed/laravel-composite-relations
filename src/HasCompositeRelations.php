@@ -2,9 +2,9 @@
 
 namespace Reedware\LaravelCompositeRelations;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 trait HasCompositeRelations
 {
@@ -45,7 +45,7 @@ trait HasCompositeRelations
      */
     public function getQualifiedKeyNames()
     {
-        return array_map(function($keyName) {
+        return array_map(function ($keyName) {
             return $this->qualifyColumn($keyName);
         }, $this->getKeyNames());
     }
@@ -57,7 +57,7 @@ trait HasCompositeRelations
      */
     public function getKeys()
     {
-        return array_map(function($keyName) {
+        return array_map(function ($keyName) {
             return $this->getAttribute($keyName);
         }, $this->getKeyNames());
     }
@@ -69,7 +69,7 @@ trait HasCompositeRelations
      */
     public function getForeignKeys()
     {
-        return array_map(function($keyName) {
+        return array_map(function ($keyName) {
             return Str::snake(class_basename($this)).'_'.$keyName;
         }, $this->getKeyNames());
     }
@@ -78,12 +78,10 @@ trait HasCompositeRelations
      * Define a one-to-one relationship.
      *
      * @param  string  $related
-     * @param  array|null  $foreignKeys
-     * @param  array|null  $localKeys
      * @param  string|null  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasOne
      */
-    public function compositeHasOne($related, array $foreignKeys = null, array $localKeys = null, $glue = 'or')
+    public function compositeHasOne($related, ?array $foreignKeys = null, ?array $localKeys = null, $glue = 'or')
     {
         $instance = $this->newRelatedInstance($related);
 
@@ -91,7 +89,7 @@ trait HasCompositeRelations
 
         $localKeys = $localKeys ?: $this->getKeyNames();
 
-        $foreignKeys = array_map(function($foreignKey) use ($instance) {
+        $foreignKeys = array_map(function ($foreignKey) use ($instance) {
             return $instance->getTable().'.'.$foreignKey;
         }, $foreignKeys);
 
@@ -101,11 +99,6 @@ trait HasCompositeRelations
     /**
      * Instantiate a new HasOne relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  array  $foreignKeys
-     * @param  array  $localKeys
-     * @param  string $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasOne
      */
     protected function newCompositeHasOne(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
@@ -116,14 +109,12 @@ trait HasCompositeRelations
     /**
      * Define an inverse one-to-one or many composite relationship.
      *
-     * @param  string      $related
-     * @param  array|null  $foreignKeys
-     * @param  array|null  $ownerKeys
-     * @param  string      $relation
-     * @param  string      $glue
+     * @param  string  $related
+     * @param  string  $relation
+     * @param  string  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeBelongsTo
      */
-    public function compositeBelongsTo($related, array $foreignKeys = null, array $ownerKeys = null, $relation = null, $glue = 'or')
+    public function compositeBelongsTo($related, ?array $foreignKeys = null, ?array $ownerKeys = null, $relation = null, $glue = 'or')
     {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
@@ -138,7 +129,7 @@ trait HasCompositeRelations
         // foreign key name by using the name of the relationship function, which
         // when combined with an "_id" should conventionally match the columns.
         if (empty($foreignKeys)) {
-            $foreignKeys = array_map(function($keyName) use ($relation) {
+            $foreignKeys = array_map(function ($keyName) use ($relation) {
                 return Str::snake($relation).'_'.$keyName;
             }, $instance->getKeyNames());
         }
@@ -153,10 +144,6 @@ trait HasCompositeRelations
     /**
      * Instantiate a new BelongsTo relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $child
-     * @param  array  $foreignKeys
-     * @param  array  $ownerKeys
      * @param  string  $relation
      * @param  string  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeBelongsTo
@@ -181,13 +168,11 @@ trait HasCompositeRelations
     /**
      * Define a one-to-many relationship.
      *
-     * @param  string      $related
-     * @param  array|null  $foreignKeys
-     * @param  array|null  $localKeys
-     * @param  string|null $glue
+     * @param  string  $related
+     * @param  string|null  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasMany
      */
-    public function compositeHasMany($related, array $foreignKeys = null, array $localKeys = null, $glue = 'or')
+    public function compositeHasMany($related, ?array $foreignKeys = null, ?array $localKeys = null, $glue = 'or')
     {
         $instance = $this->newRelatedInstance($related);
 
@@ -195,7 +180,7 @@ trait HasCompositeRelations
 
         $localKeys = $localKeys ?: $this->getKeyNames();
 
-        $foreignKeys = array_map(function($foreignKey) use ($instance) {
+        $foreignKeys = array_map(function ($foreignKey) use ($instance) {
             return $instance->getTable().'.'.$foreignKey;
         }, $foreignKeys);
 
@@ -207,11 +192,6 @@ trait HasCompositeRelations
     /**
      * Instantiate a new HasMany relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  array  $foreignKeys
-     * @param  array  $localKeys
-     * @param  string  $glue
      * @return \Reedware\LaravelCompositeRelations\CompositeHasMany
      */
     protected function newCompositeHasMany(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)

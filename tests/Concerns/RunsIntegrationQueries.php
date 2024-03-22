@@ -25,8 +25,8 @@ trait RunsIntegrationQueries
         $db = new DB;
 
         $db->addConnection([
-            'driver'    => 'sqlite',
-            'database'  => ':memory:',
+            'driver' => 'sqlite',
+            'database' => ':memory:',
         ]);
 
         $db->bootEloquent();
@@ -84,11 +84,11 @@ trait RunsIntegrationQueries
             'vendor_name' => 'ABC',
             'vendor_id' => 'ABC-001',
             'summary' => [
-                'summary' => 'get the things'
+                'summary' => 'get the things',
             ],
             'data' => [
-                ['data_index' => 0, 'data_value' => 'milk']
-            ]
+                ['data_index' => 0, 'data_value' => 'milk'],
+            ],
         ]);
     }
 
@@ -96,7 +96,6 @@ trait RunsIntegrationQueries
      * Seeds the specified data as a task in the database.
      *
      * @param  array  $task
-     *
      * @return void
      */
     protected function seedTask($task)
@@ -109,11 +108,11 @@ trait RunsIntegrationQueries
 
         $task = EloquentTaskModelStub::create($task);
 
-        if(!is_null($summary)) {
+        if (! is_null($summary)) {
             $task->importSummary()->create($summary);
         }
 
-        if(!empty($data)) {
+        if (! empty($data)) {
             $task->importData()->createMany($data);
         }
     }

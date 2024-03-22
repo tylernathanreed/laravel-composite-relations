@@ -2,9 +2,9 @@
 
 namespace Reedware\LaravelCompositeRelations;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 abstract class CompositeHasOneOrMany extends Relation
@@ -40,10 +40,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  array  $foreignKeys
-     * @param  array  $localKeys
      * @return void
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
@@ -51,7 +47,7 @@ abstract class CompositeHasOneOrMany extends Relation
         $this->localKeys = $localKeys;
         $this->foreignKeys = $foreignKeys;
         $glue = strtolower($glue);
-        if (!in_array($glue, ['and', 'or'])) {
+        if (! in_array($glue, ['and', 'or'])) {
             throw new \InvalidArgumentException('The glue must be either "and" or "or".');
         }
         $this->compositeGlue = $glue;
@@ -62,7 +58,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @param  array  $attributes
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function make(array $attributes = [])
@@ -79,13 +74,13 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function addConstraints()
     {
-        if (!static::$constraints) {
+        if (! static::$constraints) {
             return;
         }
 
-        $this->query->where(function($query) {
+        $this->query->where(function ($query) {
 
-            foreach($this->getParentKeys() as $index => $parentKey) {
+            foreach ($this->getParentKeys() as $index => $parentKey) {
                 $this->query->where($this->foreignKeys[$index], '=', $parentKey);
 
                 $this->query->whereNotNull($this->foreignKeys[$index]);
@@ -97,13 +92,12 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $models
      * @return void
      */
     public function addEagerConstraints(array $models)
     {
         // Wrap everything in a "where" clause
-        $this->query->where(function($query) use ($models) {
+        $this->query->where(function ($query) use ($models) {
 
             // We can't use a "where in" clause, as there are multiple keys. We instead
             // need to use a nested "or where" clause for each individual model. It's
@@ -113,26 +107,26 @@ abstract class CompositeHasOneOrMany extends Relation
             $mapped = [];
 
             // Iterate through each model
-            foreach($models as $model) {
+            foreach ($models as $model) {
 
                 // We'll grab the primary key names of the related models since it could be set to
                 // a non-standard name and not "id". We will then construct the constraint for
                 // our eagerly loading query so it returns the proper models from execution.
 
                 // Determine the pair mapping
-                $mapping = array_combine($this->foreignKeys, array_map(function($localKey) use ($model) {
+                $mapping = array_combine($this->foreignKeys, array_map(function ($localKey) use ($model) {
                     return $model->{$localKey};
                 }, $this->localKeys));
 
                 // If the pairing has already been mapped, skip it
-                if(isset($mapped[$mappedKey = json_encode($mapping)])) {
+                if (isset($mapped[$mappedKey = json_encode($mapping)])) {
                     continue;
                 }
 
                 // Add an "or where" clause for each key pairing
                 if ($this->compositeGlue === 'and') {
-                    $query->orWhere(function($query) use($mapping) {
-                        foreach($mapping as $foreignKey => $localKey) {
+                    $query->orWhere(function ($query) use ($mapping) {
+                        foreach ($mapping as $foreignKey => $localKey) {
                             $query->where($foreignKey, '=', $localKey);
                         }
                     });
@@ -155,8 +149,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @param  string  $relation
      * @return array
      */
@@ -168,8 +160,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @param  string  $relation
      * @return array
      */
@@ -181,8 +171,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @param  string  $relation
      * @param  string  $type
      * @return array
@@ -196,7 +184,7 @@ abstract class CompositeHasOneOrMany extends Relation
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
 
-            $dictionaryKey = json_encode(array_map(function($localKey) use ($model) {
+            $dictionaryKey = json_encode(array_map(function ($localKey) use ($model) {
                 return $model->getAttribute($localKey);
             }, $this->localKeys));
 
@@ -213,7 +201,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param  array   $dictionary
      * @param  string  $key
      * @param  string  $type
      * @return mixed
@@ -228,7 +215,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @return array
      */
     protected function buildDictionary(Collection $results)
@@ -236,7 +222,7 @@ abstract class CompositeHasOneOrMany extends Relation
         $foreigns = $this->getForeignKeyNames();
 
         return $results->mapToDictionary(function ($result) use ($foreigns) {
-            return [json_encode(array_map(function ($foreign) use ($result){
+            return [json_encode(array_map(function ($foreign) use ($result) {
                 return $result->{$foreign};
             }, $foreigns)) => $result];
         })->all();
@@ -263,8 +249,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function firstOrNew(array $attributes, array $values = [])
@@ -281,8 +265,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function firstOrCreate(array $attributes, array $values = [])
@@ -297,8 +279,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array  $attributes
-     * @param  array  $values
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function updateOrCreate(array $attributes, array $values = [])
@@ -313,7 +293,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return \Illuminate\Database\Eloquent\Model|false
      */
     public function save(Model $model)
@@ -341,7 +320,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @param  array  $attributes
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function create(array $attributes = [])
@@ -356,7 +334,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @param  array  $records
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function createMany(array $records)
@@ -373,14 +350,13 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Set the foreign ID for creating a related model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
      * @return void
      */
     protected function setForeignAttributesForCreate(Model $model)
     {
         $parentKeys = $this->getParentKeys();
 
-        foreach($this->getForeignKeyNames() as $index => $foreignKey) {
+        foreach ($this->getForeignKeyNames() as $index => $foreignKey) {
             $model->setAttribute($foreignKey, $parentKeys[$index]);
         }
     }
@@ -388,8 +364,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -399,10 +373,10 @@ abstract class CompositeHasOneOrMany extends Relation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        return $query->select($columns)->where(function($query) {
+        return $query->select($columns)->where(function ($query) {
             $foreignKeys = $this->getQualifiedForeignKeyNames();
 
-            foreach($this->getQualifiedParentKeyNames() as $index => $parentKey) {
+            foreach ($this->getQualifiedParentKeyNames() as $index => $parentKey) {
                 $query->whereColumn($parentKey, '=', $foreignKeys[$index]);
             }
         });
@@ -411,8 +385,6 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -422,10 +394,10 @@ abstract class CompositeHasOneOrMany extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->select($columns)->where(function($query) use ($hash) {
+        return $query->select($columns)->where(function ($query) use ($hash) {
             $foreignKeys = $this->getForeignKeyNames();
 
-            foreach($this->getQualifiedParentKeyNames() as $index => $parentKey) {
+            foreach ($this->getQualifiedParentKeyNames() as $index => $parentKey) {
                 $query->whereColumn($parentKey, '=', $hash.'.'.$foreignKeys[$index]);
             }
         });
@@ -436,8 +408,6 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return \Illuminate\Database\Eloquent\Builder
@@ -454,10 +424,10 @@ abstract class CompositeHasOneOrMany extends Relation
             $query->getModel()->setTable($alias);
         }
 
-        return $query->where(function($query) {
+        return $query->where(function ($query) {
             $foreignKeys = $this->getForeignKeyNames();
 
-            foreach($this->getQualifiedParentKeyNames() as $index => $parentKey) {
+            foreach ($this->getQualifiedParentKeyNames() as $index => $parentKey) {
                 $query->whereColumn($query->qualifyColumn($foreignKeys[$index]), '=', $parentKey);
             }
         });
@@ -467,7 +437,6 @@ abstract class CompositeHasOneOrMany extends Relation
      * Get a relationship join table hash.
      *
      * @param  bool  $incrementJoinCount
-     *
      * @return string
      */
     public function getRelationCountHash($incrementJoinCount = true)
@@ -482,7 +451,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function getParentKeys()
     {
-        return array_map(function($localKey) {
+        return array_map(function ($localKey) {
             return $this->parent->getAttribute($localKey);
         }, $this->localKeys);
     }
@@ -494,7 +463,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function getQualifiedParentKeyNames()
     {
-        return array_map(function($localKey) {
+        return array_map(function ($localKey) {
             return $this->parent->qualifyColumn($localKey);
         }, $this->localKeys);
     }
@@ -506,7 +475,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function getForeignKeyNames()
     {
-        return array_map(function($foreignKey) {
+        return array_map(function ($foreignKey) {
             $segments = explode('.', $foreignKey);
 
             return end($segments);

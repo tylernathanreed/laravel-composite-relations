@@ -2,8 +2,8 @@
 
 namespace Reedware\LaravelCompositeRelations\Tests;
 
-use Reedware\LaravelCompositeRelations\Tests\EloquentTaskModelStub as Task;
 use Reedware\LaravelCompositeRelations\Tests\EloquentTaskImportSummaryModelStub as TaskImportSummary;
+use Reedware\LaravelCompositeRelations\Tests\EloquentTaskModelStub as Task;
 
 class EloquentTaskImportDataModelStub extends EloquentCompositeRelationModelStub
 {

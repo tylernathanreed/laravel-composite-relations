@@ -2,11 +2,11 @@
 
 namespace Reedware\LaravelCompositeRelations\Tests;
 
-use Mockery as m;
 use Carbon\Carbon;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\CompositeHasOne;
 
 class DatabaseEloquentHasOneTest extends TestCase
@@ -109,7 +109,7 @@ class DatabaseEloquentHasOneTest extends TestCase
 
         Carbon::setTestNow($now = Carbon::now());
 
-        $log = $this->db->pretend(function() use (&$instance, $relation) {
+        $log = $this->db->pretend(function () use (&$instance, $relation) {
             $instance = $relation->create(['summary' => 'go to the store']);
         });
 
@@ -133,14 +133,14 @@ class DatabaseEloquentHasOneTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAdded()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation();
         });
 
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -158,14 +158,14 @@ class DatabaseEloquentHasOneTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
         });
 
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -198,7 +198,7 @@ class DatabaseEloquentHasOneTest extends TestCase
         $models = [
             new EloquentTaskModelStub,
             new EloquentTaskModelStub,
-            new EloquentTaskModelStub
+            new EloquentTaskModelStub,
         ];
 
         $models[0]->vendor_id = 'ABC-001';
@@ -238,7 +238,7 @@ class DatabaseEloquentHasOneTest extends TestCase
     {
         $builder = (new EloquentTaskImportSummaryModelStub)->newQuery();
 
-        if(is_null($parent)) {
+        if (is_null($parent)) {
 
             $parent = m::mock('Illuminate\Database\Eloquent\Model');
             $parent->shouldReceive('getAttribute')->with('vendor_id')->andReturn('ABC-123');

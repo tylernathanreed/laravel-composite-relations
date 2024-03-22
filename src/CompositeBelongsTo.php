@@ -2,11 +2,11 @@
 
 namespace Reedware\LaravelCompositeRelations;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CompositeBelongsTo extends Relation
 {
@@ -55,13 +55,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $child
-     * @param  array  $foreignKeys
-     * @param  array  $ownerKeys
      * @param  string  $relationName
      * @param  string  $glue
-     *
      * @return void
      */
     public function __construct(Builder $query, Model $child, array $foreignKeys, array $ownerKeys, $relationName, $glue)
@@ -70,7 +65,7 @@ class CompositeBelongsTo extends Relation
         $this->relationName = $relationName;
         $this->foreignKeys = $foreignKeys;
         $glue = strtolower($glue);
-        if (!in_array($glue, ['and', 'or'])) {
+        if (! in_array($glue, ['and', 'or'])) {
             throw new \InvalidArgumentException('The glue must be either "and" or "or".');
         }
         $this->compositeGlue = $glue;
@@ -90,7 +85,7 @@ class CompositeBelongsTo extends Relation
      */
     public function getResults()
     {
-        foreach($this->foreignKeys as $foreignKey) {
+        foreach ($this->foreignKeys as $foreignKey) {
             if (is_null($this->child->{$foreignKey})) {
                 return $this->getDefaultFor($this->parent);
             }
@@ -106,7 +101,7 @@ class CompositeBelongsTo extends Relation
      */
     public function addConstraints()
     {
-        if (!static::$constraints) {
+        if (! static::$constraints) {
             return;
         }
 
@@ -115,8 +110,8 @@ class CompositeBelongsTo extends Relation
         // of the related models matching on the foreign key that's on a parent.
         $table = $this->related->getTable();
 
-        $this->query->where(function($query) use ($table) {
-            foreach($this->foreignKeys as $index => $foreignKey) {
+        $this->query->where(function ($query) use ($table) {
+            foreach ($this->foreignKeys as $index => $foreignKey) {
                 $this->query->where($table.'.'.$this->ownerKeys[$index], '=', $this->child->{$foreignKey});
             }
         });
@@ -125,13 +120,12 @@ class CompositeBelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $models
      * @return void
      */
     public function addEagerConstraints(array $models)
     {
         // Wrap everything in a "where" clause
-        $this->query->where(function($query) use ($models) {
+        $this->query->where(function ($query) use ($models) {
 
             // Determine the table name
             $table = $this->related->getTable();
@@ -144,28 +138,28 @@ class CompositeBelongsTo extends Relation
             $mapped = [];
 
             // Iterate through each model
-            foreach($models as $model) {
+            foreach ($models as $model) {
 
                 // We'll grab the primary key names of the related models since it could be set to
                 // a non-standard name and not "id". We will then construct the constraint for
                 // our eagerly loading query so it returns the proper models from execution.
 
                 // Determine the pair mapping
-                $mapping = array_combine(array_map(function($ownerKey) use ($table) {
+                $mapping = array_combine(array_map(function ($ownerKey) use ($table) {
                     return $table.'.'.$ownerKey;
-                }, $this->ownerKeys), array_map(function($foreignKey) use ($model) {
+                }, $this->ownerKeys), array_map(function ($foreignKey) use ($model) {
                     return $model->{$foreignKey};
                 }, $this->foreignKeys));
 
                 // If the pairing has already been mapped, skip it
-                if(isset($mapped[$mappedKey = json_encode($mapping)])) {
+                if (isset($mapped[$mappedKey = json_encode($mapping)])) {
                     continue;
                 }
 
                 // Add an "or where" clause for each key pairing
                 if ($this->compositeGlue === 'and') {
-                    $query->orWhere(function($query) use($mapping) {
-                        foreach($mapping as $foreignKey => $localKey) {
+                    $query->orWhere(function ($query) use ($mapping) {
+                        foreach ($mapping as $foreignKey => $localKey) {
                             $query->where($foreignKey, '=', $localKey);
                         }
                     });
@@ -189,7 +183,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array   $models
      * @param  string  $relation
      * @return array
      */
@@ -205,8 +198,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
      * @param  string  $relation
      * @return array
      */
@@ -219,7 +210,7 @@ class CompositeBelongsTo extends Relation
 
         foreach ($results as $result) {
 
-            $dictionaryKey = json_encode(array_map(function($ownerKey) use ($result) {
+            $dictionaryKey = json_encode(array_map(function ($ownerKey) use ($result) {
                 return (string) $result->getAttribute($ownerKey);
             }, $this->ownerKeys));
 
@@ -231,7 +222,7 @@ class CompositeBelongsTo extends Relation
         // the primary key of the children to map them onto the correct instances.
         foreach ($models as $model) {
 
-            $dictionaryKey = json_encode(array_map(function($foreignKey) use ($model) {
+            $dictionaryKey = json_encode(array_map(function ($foreignKey) use ($model) {
                 return (string) $model->getAttribute($foreignKey);
             }, $this->foreignKeys));
 
@@ -246,7 +237,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Update the parent model on the relationship.
      *
-     * @param  array  $attributes
      * @return mixed
      */
     public function update(array $attributes)
@@ -262,11 +252,11 @@ class CompositeBelongsTo extends Relation
      */
     public function associate($model)
     {
-        $attributes = $model instanceof Model ? array_map(function($ownerKey) use ($model) {
+        $attributes = $model instanceof Model ? array_map(function ($ownerKey) use ($model) {
             return $model->getAttribute($ownerKey);
         }, $this->ownerKeys) : array_values($model);
 
-        foreach($this->foreignKeys as $index => $foreignKey) {
+        foreach ($this->foreignKeys as $index => $foreignKey) {
             $this->child->setAttribute($foreignKey, $attributes[$index]);
         }
 
@@ -284,7 +274,7 @@ class CompositeBelongsTo extends Relation
      */
     public function dissociate()
     {
-        foreach($this->foreignKeys as $foreignKey) {
+        foreach ($this->foreignKeys as $foreignKey) {
             $this->child->setAttribute($foreignKey, null);
         }
 
@@ -294,8 +284,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -305,7 +293,7 @@ class CompositeBelongsTo extends Relation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        return $query->select($columns)->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function($ownerKey) use ($query) {
+        return $query->select($columns)->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function ($ownerKey) use ($query) {
             return $query->qualifyColumn($ownerKey);
         }, $this->ownerKeys)));
     }
@@ -313,8 +301,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  array|mixed  $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -326,7 +312,7 @@ class CompositeBelongsTo extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->whereColumn(array_combine(array_map(function($ownerKey) use ($hash) {
+        return $query->whereColumn(array_combine(array_map(function ($ownerKey) use ($hash) {
             return $hash.'.'.$ownerKey;
         }, $this->ownerKeys), $this->getQualifiedForeignKeyNames()));
     }
@@ -336,8 +322,6 @@ class CompositeBelongsTo extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return \Illuminate\Database\Eloquent\Builder
@@ -354,7 +338,7 @@ class CompositeBelongsTo extends Relation
             $query->getModel()->setTable($alias);
         }
 
-        return $query->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function($ownerKey) use ($query) {
+        return $query->whereColumn(array_combine($this->getQualifiedForeignKeyNames(), array_map(function ($ownerKey) use ($query) {
             return $query->qualifyColumn($ownerKey);
         }, $this->ownerKeys)));
     }
@@ -363,7 +347,6 @@ class CompositeBelongsTo extends Relation
      * Get a relationship join table hash.
      *
      * @param  bool  $incrementJoinCount
-     *
      * @return string
      */
     public function getRelationCountHash($incrementJoinCount = true)
@@ -384,7 +367,6 @@ class CompositeBelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @return \Illuminate\Database\Eloquent\Model
      */
     protected function newRelatedInstanceFor(Model $parent)
@@ -419,7 +401,7 @@ class CompositeBelongsTo extends Relation
      */
     public function getQualifiedForeignKeyNames()
     {
-        return array_map(function($foreignKey) {
+        return array_map(function ($foreignKey) {
             return $this->child->qualifyColumn($foreignKey);
         }, $this->foreignKeys);
     }
@@ -441,7 +423,7 @@ class CompositeBelongsTo extends Relation
      */
     public function getQualifiedOwnerKeyNames()
     {
-        return array_map(function($ownerKey) {
+        return array_map(function ($ownerKey) {
             return $this->related->qualifyColumn($ownerKey);
         }, $this->ownerKeys);
     }
@@ -460,6 +442,7 @@ class CompositeBelongsTo extends Relation
      * Get the name of the relationship.
      *
      * @return string
+     *
      * @deprecated The getRelationName() method should be used instead. Will be removed in Laravel 6.0.
      */
     public function getRelation()

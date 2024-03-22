@@ -2,10 +2,10 @@
 
 namespace Reedware\LaravelCompositeRelations\Tests;
 
-use Mockery as m;
-use PHPUnit\Framework\TestCase;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Mockery as m;
+use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 
 class DatabaseEloquentCompositeBelongsToTest extends TestCase
@@ -82,14 +82,14 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAdded()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation();
         });
 
         $stubs = [
             new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
             new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
-            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'XYZ-123', 'task_vendor_name' => 'XYZ'])
+            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'XYZ-123', 'task_vendor_name' => 'XYZ']),
         ];
 
         $relation->addEagerConstraints($stubs);
@@ -100,14 +100,14 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
     public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
         });
 
         $stubs = [
             new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
             new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'ABC-123', 'task_vendor_name' => 'ABC']),
-            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'XYZ-123', 'task_vendor_name' => 'XYZ'])
+            new EloquentTaskImportSummaryModelStub(['task_vendor_id' => 'XYZ-123', 'task_vendor_name' => 'XYZ']),
         ];
 
         $relation->addEagerConstraints($stubs);
@@ -118,13 +118,13 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
     public function testIdsInEagerConstraintsCanBeZero()
     {
-        $relation = Relation::noConstraints(function() {
+        $relation = Relation::noConstraints(function () {
             return $this->getRelation();
         });
 
         $stubs = [
             new EloquentTaskImportSummaryModelStub(['task_vendor_name' => 'ABC', 'task_vendor_id' => 'ABC-123']),
-            new EloquentTaskImportSummaryModelStub(['task_vendor_name' => 'QWE', 'task_vendor_id' => 0])
+            new EloquentTaskImportSummaryModelStub(['task_vendor_name' => 'QWE', 'task_vendor_id' => 0]),
         ];
 
         $relation->addEagerConstraints($stubs);
@@ -216,7 +216,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
     protected function getRelation($child = null, $glue = 'or')
     {
-        if(is_null($child)) {
+        if (is_null($child)) {
             return (new EloquentTaskImportSummaryModelStub)->task($glue);
         }
 
@@ -228,5 +228,4 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
 class EloquentBelongsToModelStub extends EloquentCompositeRelationModelStub
 {
-
 }
