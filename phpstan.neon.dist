@@ -5,4 +5,11 @@ parameters:
     excludePaths:
         - tests/*
     stubFiles:
+        - stubs/Collection.stub
         - stubs/EloquentBuilder.stub
+        - stubs/EloquentCollection.stub
+        - stubs/Enumerable.stub
+        - stubs/EnumeratesValues.stub
+        - stubs/Model.stub
+        - stubs/Relation.stub
+        - stubs/SupportsDefaultModels.stub

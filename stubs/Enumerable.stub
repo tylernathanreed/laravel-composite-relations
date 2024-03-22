@@ -1,0 +1,17 @@
+<?php
+
+namespace Illuminate\Support;
+
+use Countable;
+use IteratorAggregate;
+use JsonSerializable;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends IteratorAggregate<TKey,TValue>
+ */
+interface Enumerable extends Countable, IteratorAggregate, JsonSerializable
+{
+}

@@ -1,0 +1,13 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+use ArrayAccess;
+use JsonSerializable;
+
+/**
+ * @implements ArrayAccess<string,mixed>
+ */
+abstract class Model implements ArrayAccess, JsonSerializable
+{
+}

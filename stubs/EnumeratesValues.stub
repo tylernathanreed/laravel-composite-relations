@@ -1,0 +1,13 @@
+<?php
+
+namespace Illuminate\Support\Traits;
+
+use Illuminate\Support\HigherOrderCollectionProxy;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
+trait EnumeratesValues
+{
+}

@@ -5,12 +5,16 @@ namespace Reedware\LaravelCompositeRelations;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template TRelatedModel of Model
+ * @extends CompositeHasOneOrMany<TRelatedModel>
+ */
 class CompositeHasMany extends CompositeHasOneOrMany
 {
     /**
      * Get the results of the relationship.
      *
-     * @return Collection<int,Model>
+     * @return Collection<int,TRelatedModel>
      */
     public function getResults(): Collection
     {
@@ -22,9 +26,9 @@ class CompositeHasMany extends CompositeHasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array<int,Model> $models
+     * @param array<int,TRelatedModel> $models
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function initRelation(array $models, $relation): array
     {
@@ -38,10 +42,10 @@ class CompositeHasMany extends CompositeHasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array<int,Model> $models
-     * @param Collection<int,Model> $results
+     * @param array<int,TRelatedModel> $models
+     * @param Collection<int,TRelatedModel> $results
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function match(array $models, Collection $results, $relation)
     {

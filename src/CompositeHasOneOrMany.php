@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 
+/**
+ * @template TRelatedModel of Model
+ * @extends Relation<TRelatedModel>
+ */
 abstract class CompositeHasOneOrMany extends Relation
 {
     /**
@@ -39,6 +43,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
+     * @param Builder<TRelatedModel> $query
      * @param array<int,string> $foreignKeys
      * @param array<int,string> $localKeys
      */
@@ -61,6 +66,7 @@ abstract class CompositeHasOneOrMany extends Relation
      * Create and return an un-saved instance of the related model.
      *
      * @param array<string,mixed> $attributes
+     * @return TRelatedModel
      */
     public function make(array $attributes = []): Model
     {
@@ -92,7 +98,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array<int,Model> $models
+     * @param array<int,TRelatedModel> $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -148,10 +154,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param array<int,Model> $models
-     * @param Collection<int,Model> $results
+     * @param array<int,TRelatedModel> $models
+     * @param Collection<int,TRelatedModel> $results
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function matchOne(array $models, Collection $results, $relation)
     {
@@ -161,10 +167,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array<int,Model> $models
-     * @param Collection<int,Model> $results
+     * @param array<int,TRelatedModel> $models
+     * @param Collection<int,TRelatedModel> $results
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function matchMany(array $models, Collection $results, $relation)
     {
@@ -174,11 +180,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array<int,Model> $models
-     * @param Collection<int,Model> $results
+     * @param array<int,TRelatedModel> $models
+     * @param Collection<int,TRelatedModel> $results
      * @param  string  $relation
      * @param  'one'|'many'  $type
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
@@ -207,10 +213,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param array<string,array<int,Model>> $dictionary
+     * @param array<string,array<int,TRelatedModel>> $dictionary
      * @param  string  $key
      * @param  string  $type
-     * @return Collection<int,Model>|Model|null
+     * @return Collection<int,TRelatedModel>|TRelatedModel|null
      */
     protected function getRelationValue(array $dictionary, $key, $type)
     {
@@ -224,8 +230,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param Collection<int,Model> $results
-     * @return array<string,array<int,Model>>
+     * @param Collection<int,TRelatedModel> $results
+     * @return array<string,array<int,TRelatedModel>>
      */
     protected function buildDictionary(Collection $results)
     {
@@ -246,6 +252,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int,string>  $columns
+     * @return TRelatedModel
      */
     public function findOrNew($id, $columns = ['*']): Model
     {
@@ -263,6 +270,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param array<string,mixed> $attributes
      * @param array<string,mixed> $values
+     * @return TRelatedModel
      */
     public function firstOrNew(array $attributes, array $values = []): Model
     {
@@ -280,6 +288,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param array<string,mixed> $attributes
      * @param array<string,mixed> $values
+     * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes, array $values = []): Model
     {
@@ -295,6 +304,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param array<string,mixed> $attributes
      * @param array<string,mixed> $values
+     * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = []): Model
     {
@@ -308,7 +318,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @return Model|false
+     * @param TRelatedModel $model
+     * @return TRelatedModel|false
      */
     public function save(Model $model): Model|bool
     {
@@ -320,8 +331,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param  iterable<Model>  $models
-     * @return iterable<Model>
+     * @param  iterable<TRelatedModel>  $models
+     * @return iterable<TRelatedModel>
      */
     public function saveMany($models)
     {
@@ -336,6 +347,7 @@ abstract class CompositeHasOneOrMany extends Relation
      * Create a new instance of the related model.
      *
      * @param array<string,mixed> $attributes
+     * @return TRelatedModel
      */
     public function create(array $attributes = []): Model
     {
@@ -353,7 +365,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param array<int,array<string,mixed>> $records
      *
-     * @return Collection<int,Model>
+     * @return Collection<int,TRelatedModel>
      */
     public function createMany(array $records): Collection
     {
@@ -368,6 +380,8 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Set the foreign ID for creating a related model.
+     *
+     * @param TRelatedModel $model
      */
     protected function setForeignAttributesForCreate(Model $model): void
     {
@@ -381,7 +395,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
+     * @param Builder<TRelatedModel> $query
+     * @param Builder<Model> $parentQuery
      * @param  array<int,string>  $columns
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): Builder
     {
@@ -403,7 +420,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
+     * @param  Builder<TRelatedModel> $query
+     * @param  Builder<Model>     $parentQuery
      * @param  array<int,string>  $columns
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQueryForSelfRelation(
         Builder $query,
@@ -430,9 +450,11 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
+     * @param  Builder<TRelatedModel> $query
+     * @param  Builder<Model> $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationJoinQuery(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
     {
@@ -459,9 +481,8 @@ abstract class CompositeHasOneOrMany extends Relation
      * Get a relationship join table hash.
      *
      * @param  bool  $incrementJoinCount
-     * @return string
      */
-    public function getRelationCountHash($incrementJoinCount = true)
+    public function getRelationCountHash($incrementJoinCount = true): string
     {
         return 'laravel_reserved_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }

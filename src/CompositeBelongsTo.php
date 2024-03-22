@@ -9,12 +9,20 @@ use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use InvalidArgumentException;
 
+/**
+ * @template TRelatedModel of Model
+ * @template TChildModel of Model
+ * @extends Relation<TRelatedModel>
+ */
 class CompositeBelongsTo extends Relation
 {
+    /** @use SupportsDefaultModels<TRelatedModel> */
     use SupportsDefaultModels;
 
     /**
      * The child model instance of the relation.
+     *
+     * @var TChildModel
      */
     protected Model $child;
 
@@ -52,6 +60,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
+     * @param Builder<TRelatedModel> $query
+     * @param TChildModel $child,
      * @param array<int,string> $foreignKeys
      * @param array<int,string> $ownerKeys
      */
@@ -84,6 +94,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Get the results of the relationship.
+     *
+     * @return ?TRelatedModel
      */
     public function getResults(): ?Model
     {
@@ -98,10 +110,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (! static::$constraints) {
             return;
@@ -122,7 +132,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array<int,Model> $models
+     * @param array<int,TRelatedModel> $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -185,10 +195,10 @@ class CompositeBelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array<int,Model> $models
+     * @param  array<int,TRelatedModel> $models
      * @param  string  $relation
      *
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function initRelation(array $models, $relation): array
     {
@@ -202,11 +212,11 @@ class CompositeBelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array<int,Model> $models
-     * @param  Collection<int,Model> $results
+     * @param  array<int,TRelatedModel> $models
+     * @param  Collection<int,TRelatedModel> $results
      * @param  string  $relation
      *
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function match(array $models, Collection $results, $relation)
     {
@@ -255,6 +265,7 @@ class CompositeBelongsTo extends Relation
      * Associate the model instance to the given parent.
      *
      * @param  Model|array<string,mixed>  $model
+     * @return TChildModel
      */
     public function associate($model): Model
     {
@@ -275,6 +286,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Dissociate previously associated model from the given parent.
+     *
+     * @return TChildModel
      */
     public function dissociate(): Model
     {
@@ -288,8 +301,10 @@ class CompositeBelongsTo extends Relation
     /**
      * Add the constraints for a relationship query.
      *
+     * @param  Builder<TRelatedModel> $query
+     * @param  Builder<TChildModel> $parentQuery
      * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -312,8 +327,10 @@ class CompositeBelongsTo extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
+     * @param Builder<TRelatedModel> $query
+     * @param Builder<TChildModel> $parentQuery
      * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -338,9 +355,11 @@ class CompositeBelongsTo extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
+     * @param  Builder<TRelatedModel> $query
+     * @param  Builder<TChildModel> $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder<TRelatedModel>
      */
     public function getRelationJoinQuery(Builder $query, Builder $parentQuery, $type = 'inner', $alias = null)
     {

@@ -1,0 +1,17 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @template TKey of array-key
+ * @template TModel of Model
+ *
+ * @extends BaseCollection<TKey,TModel>
+ */
+class Collection extends BaseCollection
+{
+    
+}

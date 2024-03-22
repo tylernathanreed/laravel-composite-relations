@@ -6,12 +6,19 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
+/**
+ * @template TRelatedModel of Model
+ * @extends CompositeHasOneOrMany<TRelatedModel>
+ */
 class CompositeHasOne extends CompositeHasOneOrMany
 {
+    /** @use SupportsDefaultModels<TRelatedModel> */
     use SupportsDefaultModels;
 
     /**
      * Get the results of the relationship.
+     *
+     * @return ?TRelatedModel
      */
     public function getResults(): ?Model
     {
@@ -27,9 +34,9 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array<int,Model> $models
+     * @param array<int,TRelatedModel> $models
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function initRelation(array $models, $relation)
     {
@@ -43,10 +50,10 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array<int,Model> $models
-     * @param Collection<int,Model> $results
+     * @param array<int,TRelatedModel> $models
+     * @param Collection<int,TRelatedModel> $results
      * @param  string  $relation
-     * @return array<int,Model>
+     * @return array<int,TRelatedModel>
      */
     public function match(array $models, Collection $results, $relation)
     {
@@ -56,9 +63,9 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return TRelatedModel
      */
-    public function newRelatedInstanceFor(Model $parent)
+    public function newRelatedInstanceFor(Model $parent): Model
     {
         $instance = $this->related->newInstance();
 

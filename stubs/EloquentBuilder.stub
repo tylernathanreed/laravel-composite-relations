@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @method Model getModel()
- * @method Collection<int,Model> get()
- * @method ?Model first()
- * @method ?Model find(mixed $id, array<int,string> $columns)
+ * @template TModel of Model
+ *
+ * @method TModel getModel()
+ * @method Collection<int,TModel> get()
+ * @method ?TModel first()
+ * @method ?TModel find(mixed $id, array<int,string> $columns)
  *
  * @mixin \Illuminate\Database\Query\Builder
  */

@@ -1,0 +1,20 @@
+<?php
+
+namespace Illuminate\Support;
+
+use ArrayAccess;
+use Illuminate\Support\Enumerable;
+use Illuminate\Support\Traits\EnumeratesValues;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements ArrayAccess<TKey,TValue>
+ * @implements Enumerable<TKey,TValue>
+ */
+class Collection implements ArrayAccess, Enumerable
+{
+    /** @use EnumeratesValues<TKey,TValue> */
+    use EnumeratesValues;
+}
