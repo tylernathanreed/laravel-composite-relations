@@ -326,7 +326,7 @@ class CompositeBelongsTo extends Relation
 
         $query->getModel()->setTable($hash);
 
-        return $query->whereColumn(array_combine(array_map(function($ownerKey) {
+        return $query->whereColumn(array_combine(array_map(function($ownerKey) use ($hash) {
             return $hash.'.'.$ownerKey;
         }, $this->ownerKeys), $this->getQualifiedForeignKeyNames()));
     }
