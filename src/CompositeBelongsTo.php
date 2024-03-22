@@ -16,7 +16,7 @@ class CompositeBelongsTo extends Relation
     /**
      * The child model instance of the relation.
      */
-    protected $child;
+    protected Model $child;
 
     /**
      * The foreign keys of the parent model.
@@ -51,6 +51,9 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Create a new belongs to relationship instance.
+     *
+     * @param array<int,string> $foreignKeys
+     * @param array<int,string> $ownerKeys
      */
     public function __construct(
         Builder $query,
@@ -121,9 +124,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @return void
+     * @param array<int,Model> $models
      */
-    public function addEagerConstraints(array $models)
+    public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
         $this->query->where(function ($query) use ($models) {
@@ -184,10 +187,12 @@ class CompositeBelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
+     * @param  array<int,Model> $models
      * @param  string  $relation
-     * @return array
+     *
+     * @return array<int,Model>
      */
-    public function initRelation(array $models, $relation)
+    public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
             $model->setRelation($relation, $this->getDefaultFor($model));
@@ -199,8 +204,11 @@ class CompositeBelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
+     * @param  array<int,Model> $models
+     * @param  Collection<int,Model> $results
      * @param  string  $relation
-     * @return array
+     *
+     * @return array<int,Model>
      */
     public function match(array $models, Collection $results, $relation)
     {
@@ -238,9 +246,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Update the parent model on the relationship.
      *
-     * @return mixed
+     * @param array<string,mixed> $attributes
      */
-    public function update(array $attributes)
+    public function update(array $attributes): bool
     {
         return $this->getResults()->fill($attributes)->save();
     }
@@ -248,10 +256,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  \Illuminate\Database\Eloquent\Model|array  $model
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param  Model|array<string,mixed>  $model
      */
-    public function associate($model)
+    public function associate($model): Model
     {
         $attributes = $model instanceof Model ? array_map(function ($ownerKey) use ($model) {
             return $model->getAttribute($ownerKey);
@@ -270,10 +277,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Dissociate previously associated model from the given parent.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function dissociate()
+    public function dissociate(): Model
     {
         foreach ($this->foreignKeys as $foreignKey) {
             $this->child->setAttribute($foreignKey, null);
@@ -394,10 +399,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Get the child of the relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getChild()
+    public function getChild(): Model
     {
         return $this->child;
     }
@@ -405,9 +408,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the foreign keys of the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getForeignKeyNames()
+    public function getForeignKeyNames(): array
     {
         return $this->foreignKeys;
     }
@@ -415,9 +418,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the fully qualified foreign keys of the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getQualifiedForeignKeyNames()
+    public function getQualifiedForeignKeyNames(): array
     {
         return array_map(function ($foreignKey) {
             return $this->child->qualifyColumn($foreignKey);
@@ -427,9 +430,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the associated keys of the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getOwnerKeyNames()
+    public function getOwnerKeyNames(): array
     {
         return $this->ownerKeys;
     }
@@ -437,9 +440,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the fully qualified associated keys of the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getQualifiedOwnerKeyNames()
+    public function getQualifiedOwnerKeyNames(): array
     {
         return array_map(function ($ownerKey) {
             return $this->related->qualifyColumn($ownerKey);
@@ -448,22 +451,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Get the name of the relationship.
-     *
-     * @return string
      */
-    public function getRelationName()
-    {
-        return $this->relationName;
-    }
-
-    /**
-     * Get the name of the relationship.
-     *
-     * @return string
-     *
-     * @deprecated The getRelationName() method should be used instead. Will be removed in Laravel 6.0.
-     */
-    public function getRelation()
+    public function getRelationName(): string
     {
         return $this->relationName;
     }

@@ -38,6 +38,9 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Create a new has one or many relationship instance.
+     *
+     * @param array<int,string> $foreignKeys
+     * @param array<int,string> $localKeys
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
@@ -57,9 +60,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array<string,mixed> $attributes
      */
-    public function make(array $attributes = [])
+    public function make(array $attributes = []): Model
     {
         return tap($this->related->newInstance($attributes), function ($instance) {
             $this->setForeignAttributesForCreate($instance);
@@ -68,10 +71,8 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Set the base constraints on the relation query.
-     *
-     * @return void
      */
-    public function addConstraints()
+    public function addConstraints(): void
     {
         if (! static::$constraints) {
             return;
@@ -88,6 +89,8 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Set the constraints for an eager load of the relation.
+     *
+     * @param array<int,Model> $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -143,8 +146,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
+     * @param array<int,Model> $models
+     * @param Collection<int,Model> $results
      * @param  string  $relation
-     * @return array
+     * @return array<int,Model>
      */
     public function matchOne(array $models, Collection $results, $relation)
     {
@@ -154,8 +159,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
+     * @param array<int,Model> $models
+     * @param Collection<int,Model> $results
      * @param  string  $relation
-     * @return array
+     * @return array<int,Model>
      */
     public function matchMany(array $models, Collection $results, $relation)
     {
@@ -165,9 +172,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
+     * @param array<int,Model> $models
+     * @param Collection<int,Model> $results
      * @param  string  $relation
-     * @param  string  $type
-     * @return array
+     * @param  'one'|'many'  $type
+     * @return array<int,Model>
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
@@ -195,9 +204,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
+     * @param array<string,array<int,Model>> $dictionary
      * @param  string  $key
      * @param  string  $type
-     * @return mixed
+     * @return Collection<int,Model>|Model|null
      */
     protected function getRelationValue(array $dictionary, $key, $type)
     {
@@ -209,7 +219,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @return array
+     * @param Collection<int,Model> $results
+     * @return array<string,array<int,Model>>
      */
     protected function buildDictionary(Collection $results)
     {
@@ -226,10 +237,9 @@ abstract class CompositeHasOneOrMany extends Relation
      * Find a model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
-     * @param  array  $columns
-     * @return \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model
+     * @param  array<int,string>  $columns
      */
-    public function findOrNew($id, $columns = ['*'])
+    public function findOrNew($id, $columns = ['*']): Model
     {
         if (is_null($instance = $this->getQuery()->find($id, $columns))) {
             $instance = $this->related->newInstance();
@@ -243,9 +253,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array<string,mixed> $attributes
+     * @param array<string,mixed> $values
      */
-    public function firstOrNew(array $attributes, array $values = [])
+    public function firstOrNew(array $attributes, array $values = []): Model
     {
         if (is_null($instance = $this->getQuery()->where($attributes)->first())) {
             $instance = $this->related->newInstance($attributes + $values);
@@ -259,9 +270,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array<string,mixed> $attributes
+     * @param array<string,mixed> $values
      */
-    public function firstOrCreate(array $attributes, array $values = [])
+    public function firstOrCreate(array $attributes, array $values = []): Model
     {
         if (is_null($instance = $this->getQuery()->where($attributes)->first())) {
             $instance = $this->create($attributes + $values);
@@ -273,9 +285,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array<string,mixed> $attributes
+     * @param array<string,mixed> $values
      */
-    public function updateOrCreate(array $attributes, array $values = [])
+    public function updateOrCreate(array $attributes, array $values = []): Model
     {
         return tap($this->firstOrNew($attributes), function ($instance) use ($values) {
             $instance->fill($values);
@@ -287,9 +300,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @return \Illuminate\Database\Eloquent\Model|false
+     * @return Model|false
      */
-    public function save(Model $model)
+    public function save(Model $model): Model|bool
     {
         $this->setForeignAttributesForCreate($model);
 
@@ -299,8 +312,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a collection of models to the parent instance.
      *
-     * @param  iterable  $models
-     * @return iterable
+     * @param  iterable<Model>  $models
+     * @return iterable<Model>
      */
     public function saveMany($models)
     {
@@ -314,9 +327,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param array<string,mixed> $attributes
      */
-    public function create(array $attributes = [])
+    public function create(array $attributes = []): Model
     {
         return tap($this->related->newInstance($attributes), function ($instance) {
             $this->setForeignAttributesForCreate($instance);
@@ -328,9 +341,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param array<int,array<string,mixed>> $records
+     *
+     * @return Collection<int,Model>
      */
-    public function createMany(array $records)
+    public function createMany(array $records): Collection
     {
         $instances = $this->related->newCollection();
 
@@ -343,10 +358,8 @@ abstract class CompositeHasOneOrMany extends Relation
 
     /**
      * Set the foreign ID for creating a related model.
-     *
-     * @return void
      */
-    protected function setForeignAttributesForCreate(Model $model)
+    protected function setForeignAttributesForCreate(Model $model): void
     {
         $parentKeys = $this->getParentKeys();
 
@@ -358,10 +371,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  array<int,string>  $columns
      */
-    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): Builder
     {
         if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
@@ -381,11 +393,13 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  array<int,string>  $columns
      */
-    public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
-    {
+    public function getRelationExistenceQueryForSelfRelation(
+        Builder $query,
+        Builder $parentQuery,
+        $columns = ['*']
+    ): Builder {
         $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
 
         $query->getModel()->setTable($hash);
@@ -483,9 +497,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the foreign keys for the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getQualifiedForeignKeyNames()
+    public function getQualifiedForeignKeyNames(): array
     {
         return $this->foreignKeys;
     }
@@ -493,9 +507,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the local key for the relationship.
      *
-     * @return array
+     * @return array<int,string>
      */
-    public function getLocalKeyNames()
+    public function getLocalKeyNames(): array
     {
         return $this->localKeys;
     }

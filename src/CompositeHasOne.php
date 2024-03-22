@@ -12,10 +12,8 @@ class CompositeHasOne extends CompositeHasOneOrMany
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
-    public function getResults()
+    public function getResults(): ?Model
     {
         foreach ($this->getParentKeys() as $parentKey) {
             if (is_null($parentKey)) {
@@ -29,8 +27,9 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
+     * @param array<int,Model> $models
      * @param  string  $relation
-     * @return array
+     * @return array<int,Model>
      */
     public function initRelation(array $models, $relation)
     {
@@ -44,8 +43,10 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
+     * @param array<int,Model> $models
+     * @param Collection<int,Model> $results
      * @param  string  $relation
-     * @return array
+     * @return array<int,Model>
      */
     public function match(array $models, Collection $results, $relation)
     {
