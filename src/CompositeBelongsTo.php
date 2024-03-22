@@ -84,10 +84,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Get the results of the relationship.
-     *
-     * @return mixed
      */
-    public function getResults()
+    public function getResults(): ?Model
     {
         foreach ($this->foreignKeys as $foreignKey) {
             if (is_null($this->child->{$foreignKey})) {
@@ -220,7 +218,7 @@ class CompositeBelongsTo extends Relation
         foreach ($results as $result) {
 
             $dictionaryKey = json_encode(array_map(function ($ownerKey) use ($result) {
-                return (string) $result->getAttribute($ownerKey);
+                return $result->getAttribute($ownerKey);
             }, $this->ownerKeys));
 
             $dictionary[$dictionaryKey] = $result;
@@ -232,7 +230,7 @@ class CompositeBelongsTo extends Relation
         foreach ($models as $model) {
 
             $dictionaryKey = json_encode(array_map(function ($foreignKey) use ($model) {
-                return (string) $model->getAttribute($foreignKey);
+                return $model->getAttribute($foreignKey);
             }, $this->foreignKeys));
 
             if (isset($dictionary[$dictionaryKey])) {
@@ -250,7 +248,7 @@ class CompositeBelongsTo extends Relation
      */
     public function update(array $attributes): bool
     {
-        return $this->getResults()->fill($attributes)->save();
+        return $this->getResults()?->fill($attributes)?->save() ?: false;
     }
 
     /**

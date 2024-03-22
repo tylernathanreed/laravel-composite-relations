@@ -64,9 +64,11 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function make(array $attributes = []): Model
     {
-        return tap($this->related->newInstance($attributes), function ($instance) {
-            $this->setForeignAttributesForCreate($instance);
-        });
+        $instance = $this->related->newInstance($attributes);
+
+        $this->setForeignAttributesForCreate($instance);
+
+        return $instance;
     }
 
     /**
@@ -296,11 +298,11 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function updateOrCreate(array $attributes, array $values = []): Model
     {
-        return tap($this->firstOrNew($attributes), function ($instance) use ($values) {
-            $instance->fill($values);
+        $instance = $this->firstOrNew($attributes);
 
-            $instance->save();
-        });
+        $instance->fill($values)->save();
+
+        return $instance;
     }
 
     /**
@@ -337,11 +339,13 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function create(array $attributes = []): Model
     {
-        return tap($this->related->newInstance($attributes), function ($instance) {
-            $this->setForeignAttributesForCreate($instance);
+        $instance = $this->related->newInstance($attributes);
 
-            $instance->save();
-        });
+        $this->setForeignAttributesForCreate($instance);
+
+        $instance->save();
+
+        return $instance;
     }
 
     /**
