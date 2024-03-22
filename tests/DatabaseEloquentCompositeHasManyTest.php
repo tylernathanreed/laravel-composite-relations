@@ -56,8 +56,8 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
             "'milk'",
             "'ABC-123'",
             "'ABC'",
-            '\'' . $now->toDateTimeString() . '\'',
-            '\'' . $now->toDateTimeString() . '\'',
+            '\''.$now->toDateTimeString().'\'',
+            '\''.$now->toDateTimeString().'\'',
         ), $log[0]['query']);
 
         $this->assertEquals(0, $instance->data_index);
@@ -155,8 +155,8 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
             "'carrots'",
             "'ABC-001'",
             "'ABC'",
-            '\'' . $now->toDateTimeString() . '\'',
-            '\'' . $now->toDateTimeString() . '\'',
+            '\''.$now->toDateTimeString().'\'',
+            '\''.$now->toDateTimeString().'\'',
         ), $log[1]['query']);
 
         $this->assertInstanceOf(EloquentTaskImportDataModelStub::class, $instance);

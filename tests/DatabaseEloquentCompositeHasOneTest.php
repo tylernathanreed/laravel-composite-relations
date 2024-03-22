@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Mockery as m;
-use Mockery;
-use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\CompositeHasOne;
 
@@ -123,8 +121,8 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
             "'go to the store'",
             "'ABC-123'",
             "'ABC'",
-            '\'' . $now->toDateTimeString() . '\'',
-            '\'' . $now->toDateTimeString() . '\'',
+            '\''.$now->toDateTimeString().'\'',
+            '\''.$now->toDateTimeString().'\'',
         ), $log[0]['query']);
 
         $this->assertEquals('go to the store', $instance->summary);
