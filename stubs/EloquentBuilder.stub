@@ -1,0 +1,18 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @method Model getModel()
+ * @method Collection<int,Model> get()
+ * @method ?Model first()
+ * @method ?Model find(mixed $id, array<int,string> $columns)
+ *
+ * @mixin \Illuminate\Database\Query\Builder
+ */
+class Builder
+{
+}

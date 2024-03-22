@@ -187,7 +187,8 @@ abstract class CompositeHasOneOrMany extends Relation
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
 
-            $dictionaryKey = json_encode(array_map(function ($localKey) use ($model) {
+            /** @var string */
+            $dictionaryKey = json_encode(array_map(function (string $localKey) use ($model): mixed {
                 return $model->getAttribute($localKey);
             }, $this->localKeys));
 
@@ -213,7 +214,9 @@ abstract class CompositeHasOneOrMany extends Relation
     {
         $value = $dictionary[$key];
 
-        return $type === 'one' ? reset($value) : $this->related->newCollection($value);
+        return $type === 'one'
+            ? (reset($value) ?: null)
+            : $this->related->newCollection($value);
     }
 
     /**
@@ -227,9 +230,12 @@ abstract class CompositeHasOneOrMany extends Relation
         $foreigns = $this->getForeignKeyNames();
 
         return $results->mapToDictionary(function ($result) use ($foreigns) {
-            return [json_encode(array_map(function ($foreign) use ($result) {
+            /** @var string */
+            $key = json_encode(array_map(function ($foreign) use ($result) {
                 return $result->{$foreign};
-            }, $foreigns)) => $result];
+            }, $foreigns));
+
+            return [$key => $result];
         })->all();
     }
 
