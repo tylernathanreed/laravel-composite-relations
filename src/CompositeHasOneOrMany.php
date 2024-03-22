@@ -237,7 +237,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function findOrNew($id, $columns = ['*'])
     {
-        if (is_null($instance = $this->find($id, $columns))) {
+        if (is_null($instance = $this->getQuery()->find($id, $columns))) {
             $instance = $this->related->newInstance();
 
             $this->setForeignAttributesForCreate($instance);
@@ -253,7 +253,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function firstOrNew(array $attributes, array $values = [])
     {
-        if (is_null($instance = $this->where($attributes)->first())) {
+        if (is_null($instance = $this->getQuery()->where($attributes)->first())) {
             $instance = $this->related->newInstance($attributes + $values);
 
             $this->setForeignAttributesForCreate($instance);
@@ -269,7 +269,7 @@ abstract class CompositeHasOneOrMany extends Relation
      */
     public function firstOrCreate(array $attributes, array $values = [])
     {
-        if (is_null($instance = $this->where($attributes)->first())) {
+        if (is_null($instance = $this->getQuery()->where($attributes)->first())) {
             $instance = $this->create($attributes + $values);
         }
 
