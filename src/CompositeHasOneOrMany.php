@@ -10,6 +10,7 @@ use InvalidArgumentException;
 
 /**
  * @template TRelatedModel of Model
+ *
  * @extends Relation<TRelatedModel>
  */
 abstract class CompositeHasOneOrMany extends Relation
@@ -43,9 +44,9 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param Builder<TRelatedModel> $query
-     * @param array<int,string> $foreignKeys
-     * @param array<int,string> $localKeys
+     * @param  Builder<TRelatedModel>  $query
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $localKeys
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
@@ -65,7 +66,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create and return an un-saved instance of the related model.
      *
-     * @param array<string,mixed> $attributes
+     * @param  array<string,mixed>  $attributes
      * @return TRelatedModel
      */
     public function make(array $attributes = []): Model
@@ -98,7 +99,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array<int,TRelatedModel> $models
+     * @param  array<int,TRelatedModel>  $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -154,8 +155,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param array<int,TRelatedModel> $models
-     * @param Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */
@@ -167,8 +168,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array<int,TRelatedModel> $models
-     * @param Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */
@@ -180,8 +181,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array<int,TRelatedModel> $models
-     * @param Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @param  'one'|'many'  $type
      * @return array<int,TRelatedModel>
@@ -213,7 +214,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the value of a relationship by one or many type.
      *
-     * @param array<string,array<int,TRelatedModel>> $dictionary
+     * @param  array<string,array<int,TRelatedModel>>  $dictionary
      * @param  string  $key
      * @param  string  $type
      * @return Collection<int,TRelatedModel>|TRelatedModel|null
@@ -230,7 +231,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param Collection<int,TRelatedModel> $results
+     * @param  Collection<int,TRelatedModel>  $results
      * @return array<string,array<int,TRelatedModel>>
      */
     protected function buildDictionary(Collection $results)
@@ -268,8 +269,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param array<string,mixed> $attributes
-     * @param array<string,mixed> $values
+     * @param  array<string,mixed>  $attributes
+     * @param  array<string,mixed>  $values
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes, array $values = []): Model
@@ -286,8 +287,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param array<string,mixed> $attributes
-     * @param array<string,mixed> $values
+     * @param  array<string,mixed>  $attributes
+     * @param  array<string,mixed>  $values
      * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes, array $values = []): Model
@@ -302,8 +303,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param array<string,mixed> $attributes
-     * @param array<string,mixed> $values
+     * @param  array<string,mixed>  $attributes
+     * @param  array<string,mixed>  $values
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = []): Model
@@ -318,7 +319,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Attach a model instance to the parent model.
      *
-     * @param TRelatedModel $model
+     * @param  TRelatedModel  $model
      * @return TRelatedModel|false
      */
     public function save(Model $model): Model|bool
@@ -346,7 +347,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a new instance of the related model.
      *
-     * @param array<string,mixed> $attributes
+     * @param  array<string,mixed>  $attributes
      * @return TRelatedModel
      */
     public function create(array $attributes = []): Model
@@ -363,8 +364,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Create a Collection of new instances of the related model.
      *
-     * @param array<int,array<string,mixed>> $records
-     *
+     * @param  array<int,array<string,mixed>>  $records
      * @return Collection<int,TRelatedModel>
      */
     public function createMany(array $records): Collection
@@ -381,7 +381,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Set the foreign ID for creating a related model.
      *
-     * @param TRelatedModel $model
+     * @param  TRelatedModel  $model
      */
     protected function setForeignAttributesForCreate(Model $model): void
     {
@@ -395,8 +395,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param Builder<TRelatedModel> $query
-     * @param Builder<Model> $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<Model>  $parentQuery
      * @param  array<int,string>  $columns
      * @return Builder<TRelatedModel>
      */
@@ -420,8 +420,8 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  Builder<TRelatedModel> $query
-     * @param  Builder<Model>     $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<Model>  $parentQuery
      * @param  array<int,string>  $columns
      * @return Builder<TRelatedModel>
      */
@@ -450,8 +450,8 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
-     * @param  Builder<TRelatedModel> $query
-     * @param  Builder<Model> $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<Model>  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return Builder<TRelatedModel>

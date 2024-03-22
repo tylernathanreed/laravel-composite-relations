@@ -12,6 +12,7 @@ use InvalidArgumentException;
 /**
  * @template TRelatedModel of Model
  * @template TChildModel of Model
+ *
  * @extends Relation<TRelatedModel>
  */
 class CompositeBelongsTo extends Relation
@@ -60,10 +61,10 @@ class CompositeBelongsTo extends Relation
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param Builder<TRelatedModel> $query
-     * @param TChildModel $child,
-     * @param array<int,string> $foreignKeys
-     * @param array<int,string> $ownerKeys
+     * @param  Builder<TRelatedModel>  $query
+     * @param  TChildModel  $child,
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $ownerKeys
      */
     public function __construct(
         Builder $query,
@@ -132,7 +133,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param array<int,TRelatedModel> $models
+     * @param  array<int,TRelatedModel>  $models
      */
     public function addEagerConstraints(array $models): void
     {
@@ -195,9 +196,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Initialize the relation on a set of models.
      *
-     * @param  array<int,TRelatedModel> $models
+     * @param  array<int,TRelatedModel>  $models
      * @param  string  $relation
-     *
      * @return array<int,TRelatedModel>
      */
     public function initRelation(array $models, $relation): array
@@ -212,10 +212,9 @@ class CompositeBelongsTo extends Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array<int,TRelatedModel> $models
-     * @param  Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
-     *
      * @return array<int,TRelatedModel>
      */
     public function match(array $models, Collection $results, $relation)
@@ -254,7 +253,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Update the parent model on the relationship.
      *
-     * @param array<string,mixed> $attributes
+     * @param  array<string,mixed>  $attributes
      */
     public function update(array $attributes): bool
     {
@@ -301,8 +300,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  Builder<TRelatedModel> $query
-     * @param  Builder<TChildModel> $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TChildModel>  $parentQuery
      * @param  array|mixed  $columns
      * @return Builder<TRelatedModel>
      */
@@ -320,15 +319,15 @@ class CompositeBelongsTo extends Relation
                     return $query->qualifyColumn($ownerKey);
                 }, $this->ownerKeys)
             ));
-        
+
         return $query;
     }
 
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param Builder<TRelatedModel> $query
-     * @param Builder<TChildModel> $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TChildModel>  $parentQuery
      * @param  array|mixed  $columns
      * @return Builder<TRelatedModel>
      */
@@ -346,7 +345,7 @@ class CompositeBelongsTo extends Relation
             }, $this->ownerKeys),
             $this->getQualifiedForeignKeyNames()
         ));
-        
+
         return $query;
     }
 
@@ -355,8 +354,8 @@ class CompositeBelongsTo extends Relation
      *
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
-     * @param  Builder<TRelatedModel> $query
-     * @param  Builder<TChildModel> $parentQuery
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TChildModel>  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return Builder<TRelatedModel>

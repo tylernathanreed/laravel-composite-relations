@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
 /**
  * @template TRelatedModel of Model
+ *
  * @extends CompositeHasOneOrMany<TRelatedModel>
  */
 class CompositeHasOne extends CompositeHasOneOrMany
@@ -34,7 +35,7 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array<int,TRelatedModel> $models
+     * @param  array<int,TRelatedModel>  $models
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */
@@ -50,8 +51,8 @@ class CompositeHasOne extends CompositeHasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array<int,TRelatedModel> $models
-     * @param Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */

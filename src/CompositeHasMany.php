@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TRelatedModel of Model
+ *
  * @extends CompositeHasOneOrMany<TRelatedModel>
  */
 class CompositeHasMany extends CompositeHasOneOrMany
@@ -26,7 +27,7 @@ class CompositeHasMany extends CompositeHasOneOrMany
     /**
      * Initialize the relation on a set of models.
      *
-     * @param array<int,TRelatedModel> $models
+     * @param  array<int,TRelatedModel>  $models
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */
@@ -42,8 +43,8 @@ class CompositeHasMany extends CompositeHasOneOrMany
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array<int,TRelatedModel> $models
-     * @param Collection<int,TRelatedModel> $results
+     * @param  array<int,TRelatedModel>  $models
+     * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @return array<int,TRelatedModel>
      */

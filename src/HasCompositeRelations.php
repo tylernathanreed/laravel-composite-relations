@@ -78,8 +78,8 @@ trait HasCompositeRelations
      * Define a one-to-one relationship.
      *
      * @param  class-string<Model>  $related
-     * @param  array<int,string>|null $foreignKeys
-     * @param  array<int,string>|null $localKeys
+     * @param  array<int,string>|null  $foreignKeys
+     * @param  array<int,string>|null  $localKeys
      * @param  'and'|'or'  $glue
      * @return CompositeHasOne<Model>
      */
@@ -105,10 +105,9 @@ trait HasCompositeRelations
     /**
      * Instantiate a new HasOne relationship.
      *
-     * @param  Builder<Model> $query
-     * @param  array<int,string> $foreignKeys
-     * @param  array<int,string> $localKeys
-     * @param  string $glue
+     * @param  Builder<Model>  $query
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $localKeys
      * @return CompositeHasOne<Model>
      */
     protected function newCompositeHasOne(
@@ -125,10 +124,9 @@ trait HasCompositeRelations
      * Define an inverse one-to-one or many composite relationship.
      *
      * @param  class-string<Model>  $related
-     * @param  array<int,string> $foreignKeys
-     * @param  array<int,string> $ownerKeys
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $ownerKeys
      * @param  ?string  $relation
-     * @param  string  $glue
      * @return CompositeBelongsTo<Model>
      */
     public function compositeBelongsTo(
@@ -167,10 +165,8 @@ trait HasCompositeRelations
      * Instantiate a new BelongsTo relationship.
      *
      * @param  Builder<Model>  $query
-     * @param  array<int,string> $foreignKeys
-     * @param  array<int,string> $ownerKeys
-     * @param  string  $relation
-     * @param  string  $glue
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $ownerKeys
      * @return CompositeBelongsTo<Model>
      */
     protected function newCompositeBelongsTo(
@@ -198,8 +194,8 @@ trait HasCompositeRelations
      * Define a one-to-many relationship.
      *
      * @param  class-string<Model>  $related
-     * @param  array<int,string> $foreignKeys
-     * @param  array<int,string> $localKeys
+     * @param  array<int,string>  $foreignKeys
+     * @param  array<int,string>  $localKeys
      * @return CompositeHasMany<Model>
      */
     public function compositeHasMany(
