@@ -195,7 +195,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
 
         $child->shouldReceive('setAttribute')->once()->with('task_vendor_id', null);
         $child->shouldReceive('setAttribute')->once()->with('task_vendor_name', null);
-        $child->shouldReceive('setRelation')->once()->with('relation', null);
+        $child->shouldReceive('setRelation')->once()->with('relation', null)->andReturnSelf();
 
         $relation->dissociate();
     }

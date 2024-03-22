@@ -328,7 +328,7 @@ class EloquentUserModelStub extends EloquentRelationJoinModelStub
 {
     protected $table = 'users';
 
-    protected $primaryKeys = ['vendor_name', 'vendor_id'];
+    protected array $primaryKeys = ['vendor_name', 'vendor_id'];
 
     public function scopeActive($query)
     {
@@ -385,7 +385,7 @@ class EloquentPostModelStub extends EloquentRelationJoinModelStub
 {
     protected $table = 'posts';
 
-    protected $primaryKeys = ['service_name', 'service_id'];
+    protected array $primaryKeys = ['service_name', 'service_id'];
 
     public function comments()
     {
@@ -412,7 +412,7 @@ class EloquentCountryModelStub extends EloquentRelationJoinModelStub
 {
     protected $table = 'countries';
 
-    protected $primaryKeys = ['planet_name', 'planet_id'];
+    protected array $primaryKeys = ['planet_name', 'planet_id'];
 
     public function users()
     {

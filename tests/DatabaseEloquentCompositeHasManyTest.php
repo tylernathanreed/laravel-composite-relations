@@ -50,8 +50,15 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         });
 
         $this->assertEquals(1, count($log));
-        $this->assertEquals('insert into "task_import_data" ("data_index", "data_value", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (?, ?, ?, ?, ?, ?)', $log[0]['query']);
-        $this->assertEquals([0, 'milk', 'ABC-123', 'ABC', $now->toDateTimeString(), $now->toDateTimeString()], $log[0]['bindings']);
+        $this->assertEquals(sprintf(
+            'insert into "task_import_data" ("data_index", "data_value", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (%s, %s, %s, %s, %s, %s)',
+            0,
+            "'milk'",
+            "'ABC-123'",
+            "'ABC'",
+            '\'' . $now->toDateTimeString() . '\'',
+            '\'' . $now->toDateTimeString() . '\'',
+        ), $log[0]['query']);
 
         $this->assertEquals(0, $instance->data_index);
         $this->assertEquals('milk', $instance->data_value);
@@ -141,10 +148,16 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         });
 
         $this->assertEquals(2, count($log));
-        $this->assertEquals('select * from "task_import_data" where "task_vendor_id" = ? and "task_vendor_id" is not null and "task_vendor_name" = ? and "task_vendor_name" is not null and ("data_index" = ?) limit 1', $log[0]['query']);
-        $this->assertEquals(['ABC-001', 'ABC', 1], $log[0]['bindings']);
-        $this->assertEquals('insert into "task_import_data" ("data_index", "data_value", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (?, ?, ?, ?, ?, ?)', $log[1]['query']);
-        $this->assertEquals([1, 'carrots', 'ABC-001', 'ABC', $now->toDateTimeString(), $now->toDateTimeString()], $log[1]['bindings']);
+        $this->assertEquals('select * from "task_import_data" where "task_vendor_id" = \'ABC-001\' and "task_vendor_id" is not null and "task_vendor_name" = \'ABC\' and "task_vendor_name" is not null and ("data_index" = 1) limit 1', $log[0]['query']);
+        $this->assertEquals(sprintf(
+            'insert into "task_import_data" ("data_index", "data_value", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (%s, %s, %s, %s, %s, %s)',
+            1,
+            "'carrots'",
+            "'ABC-001'",
+            "'ABC'",
+            '\'' . $now->toDateTimeString() . '\'',
+            '\'' . $now->toDateTimeString() . '\'',
+        ), $log[1]['query']);
 
         $this->assertInstanceOf(EloquentTaskImportDataModelStub::class, $instance);
 

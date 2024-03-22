@@ -4,12 +4,15 @@ namespace Reedware\LaravelCompositeRelations\Tests;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Mockery as m;
+use Mockery;
+use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 use Reedware\LaravelCompositeRelations\CompositeHasOne;
 
-class DatabaseEloquentHasOneTest extends TestCase
+class DatabaseEloquentCompositeHasOneTest extends TestCase
 {
     use Concerns\RunsIntegrationQueries;
 
@@ -92,11 +95,12 @@ class DatabaseEloquentHasOneTest extends TestCase
     public function testSaveMethodSetsForeignKeyOnModel()
     {
         $relation = $this->getRelation();
-        $mockModel = $this->getMockBuilder('Illuminate\Database\Eloquent\Model')->setMethods(['save'])->getMock();
-        $mockModel->expects($this->once())->method('save')->will($this->returnValue(true));
+        $mockModel = $this->getMockBuilder(Model::class)->onlyMethods(['save'])->getMock();
+        $mockModel->expects($this->once())->method('save')->willReturn(true);
         $result = $relation->save($mockModel);
 
         $attributes = $result->getAttributes();
+
         $this->assertEquals('ABC-123', $attributes['task_vendor_id']);
         $this->assertEquals('ABC', $attributes['task_vendor_name']);
     }
@@ -114,8 +118,14 @@ class DatabaseEloquentHasOneTest extends TestCase
         });
 
         $this->assertEquals(1, count($log));
-        $this->assertEquals('insert into "task_import_summaries" ("summary", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (?, ?, ?, ?, ?)', $log[0]['query']);
-        $this->assertEquals(['go to the store', 'ABC-123', 'ABC', $now->toDateTimeString(), $now->toDateTimeString()], $log[0]['bindings']);
+        $this->assertEquals(sprintf(
+            'insert into "task_import_summaries" ("summary", "task_vendor_id", "task_vendor_name", "updated_at", "created_at") values (%s, %s, %s, %s, %s)',
+            "'go to the store'",
+            "'ABC-123'",
+            "'ABC'",
+            '\'' . $now->toDateTimeString() . '\'',
+            '\'' . $now->toDateTimeString() . '\'',
+        ), $log[0]['query']);
 
         $this->assertEquals('go to the store', $instance->summary);
         $this->assertEquals(true, $instance->exists);

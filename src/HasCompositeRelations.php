@@ -31,7 +31,7 @@ trait HasCompositeRelations
      * @param  array<int,string>  $keys
      * @return $this
      */
-    public function setKeyName(array $keys): static
+    public function setKeyNames($keys): static
     {
         $this->primaryKeys = $keys;
 
