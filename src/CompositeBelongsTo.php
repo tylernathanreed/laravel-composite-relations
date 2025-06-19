@@ -11,33 +11,32 @@ use InvalidArgumentException;
 
 /**
  * @template TRelatedModel of Model
- * @template TChildModel of Model
+ * @template TDeclaringModel of Model
  *
- * @extends Relation<TRelatedModel>
+ * @extends Relation<TRelatedModel,TDeclaringModel,?TRelatedModel>
  */
 class CompositeBelongsTo extends Relation
 {
-    /** @use SupportsDefaultModels<TRelatedModel> */
     use SupportsDefaultModels;
 
     /**
      * The child model instance of the relation.
      *
-     * @var TChildModel
+     * @var TDeclaringModel
      */
     protected Model $child;
 
     /**
      * The foreign keys of the parent model.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected array $foreignKeys;
 
     /**
      * The associated keys on the parent model.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected array $ownerKeys;
 
@@ -62,9 +61,9 @@ class CompositeBelongsTo extends Relation
      * Create a new belongs to relationship instance.
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  TChildModel  $child,
-     * @param  array<int,string>  $foreignKeys
-     * @param  array<int,string>  $ownerKeys
+     * @param  TDeclaringModel  $child
+     * @param  list<string>  $foreignKeys
+     * @param  list<string>  $ownerKeys
      */
     public function __construct(
         Builder $query,
@@ -93,11 +92,7 @@ class CompositeBelongsTo extends Relation
         parent::__construct($query, $child);
     }
 
-    /**
-     * Get the results of the relationship.
-     *
-     * @return ?TRelatedModel
-     */
+    /** @inheritDoc */
     public function getResults(): ?Model
     {
         foreach ($this->foreignKeys as $foreignKey) {
@@ -130,11 +125,7 @@ class CompositeBelongsTo extends Relation
         });
     }
 
-    /**
-     * Set the constraints for an eager load of the relation.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     */
+    /** @inheritDoc */
     public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
@@ -193,13 +184,7 @@ class CompositeBelongsTo extends Relation
 
     }
 
-    /**
-     * Initialize the relation on a set of models.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     * @param  string  $relation
-     * @return array<int,TRelatedModel>
-     */
+    /** @inheritDoc */
     public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
@@ -209,14 +194,7 @@ class CompositeBelongsTo extends Relation
         return $models;
     }
 
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     * @param  Collection<int,TRelatedModel>  $results
-     * @param  string  $relation
-     * @return array<int,TRelatedModel>
-     */
+    /** @inheritDoc */
     public function match(array $models, Collection $results, $relation)
     {
         // First we will get to build a dictionary of the child models by their primary
@@ -263,8 +241,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Associate the model instance to the given parent.
      *
-     * @param  Model|array<string,mixed>  $model
-     * @return TChildModel
+     * @param  TRelatedModel|array<string,mixed>  $model
+     * @return TDeclaringModel
      */
     public function associate($model): Model
     {
@@ -286,7 +264,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return TChildModel
+     * @return TDeclaringModel
      */
     public function dissociate(): Model
     {
@@ -297,14 +275,7 @@ class CompositeBelongsTo extends Relation
         return $this->child->setRelation($this->relationName, null);
     }
 
-    /**
-     * Add the constraints for a relationship query.
-     *
-     * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<TChildModel>  $parentQuery
-     * @param  array|mixed  $columns
-     * @return Builder<TRelatedModel>
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         if ($parentQuery->getQuery()->from == $query->getQuery()->from) {
@@ -327,7 +298,7 @@ class CompositeBelongsTo extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<TChildModel>  $parentQuery
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  array|mixed  $columns
      * @return Builder<TRelatedModel>
      */
@@ -355,7 +326,7 @@ class CompositeBelongsTo extends Relation
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<TChildModel>  $parentQuery
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return Builder<TRelatedModel>
@@ -386,19 +357,16 @@ class CompositeBelongsTo extends Relation
      * Get a relationship join table hash.
      *
      * @param  bool  $incrementJoinCount
-     * @return string
      */
-    public function getRelationCountHash($incrementJoinCount = true)
+    public function getRelationCountHash($incrementJoinCount = true): string
     {
         return 'laravel_reserved_'.($incrementJoinCount ? static::$selfJoinCount++ : static::$selfJoinCount);
     }
 
     /**
      * Determine if the related model has an auto-incrementing ID.
-     *
-     * @return bool
      */
-    protected function relationHasIncrementingId()
+    protected function relationHasIncrementingId(): bool
     {
         return $this->related->getIncrementing() && $this->related->getKeyType() === 'int';
     }
@@ -406,7 +374,8 @@ class CompositeBelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param TDeclaringModel $parent
+     * @return TRelatedModel
      */
     protected function newRelatedInstanceFor(Model $parent)
     {
@@ -415,6 +384,8 @@ class CompositeBelongsTo extends Relation
 
     /**
      * Get the child of the relationship.
+     *
+     * @return TDeclaringModel
      */
     public function getChild(): Model
     {
@@ -424,7 +395,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the foreign keys of the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getForeignKeyNames(): array
     {
@@ -434,7 +405,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the fully qualified foreign keys of the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getQualifiedForeignKeyNames(): array
     {
@@ -446,7 +417,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the associated keys of the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getOwnerKeyNames(): array
     {
@@ -456,7 +427,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Get the fully qualified associated keys of the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getQualifiedOwnerKeyNames(): array
     {
