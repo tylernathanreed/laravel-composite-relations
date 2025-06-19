@@ -92,7 +92,7 @@ class CompositeBelongsTo extends Relation
         parent::__construct($query, $child);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function getResults(): ?Model
     {
         foreach ($this->foreignKeys as $foreignKey) {
@@ -125,7 +125,7 @@ class CompositeBelongsTo extends Relation
         });
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
@@ -184,7 +184,7 @@ class CompositeBelongsTo extends Relation
 
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function initRelation(array $models, $relation): array
     {
         foreach ($models as $model) {
@@ -194,7 +194,7 @@ class CompositeBelongsTo extends Relation
         return $models;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function match(array $models, Collection $results, $relation)
     {
         // First we will get to build a dictionary of the child models by their primary
@@ -275,7 +275,7 @@ class CompositeBelongsTo extends Relation
         return $this->child->setRelation($this->relationName, null);
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         if ($parentQuery->getQuery()->from == $query->getQuery()->from) {
@@ -374,7 +374,7 @@ class CompositeBelongsTo extends Relation
     /**
      * Make a new related instance for the given model.
      *
-     * @param TDeclaringModel $parent
+     * @param  TDeclaringModel  $parent
      * @return TRelatedModel
      */
     protected function newRelatedInstanceFor(Model $parent)
