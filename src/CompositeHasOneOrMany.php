@@ -98,7 +98,7 @@ abstract class CompositeHasOneOrMany extends Relation
         });
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
@@ -391,7 +391,7 @@ abstract class CompositeHasOneOrMany extends Relation
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): Builder
     {
         if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
