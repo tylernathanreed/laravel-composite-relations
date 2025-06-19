@@ -195,11 +195,11 @@ abstract class CompositeHasOneOrMany extends Relation
         // link them up with their children using the keyed dictionary to make the
         // matching very convenient and easy work. Then we'll just return them.
         foreach ($models as $model) {
-
-            /** @var string */
             $dictionaryKey = json_encode(array_map(function (string $localKey) use ($model): mixed {
                 return $model->getAttribute($localKey);
             }, $this->localKeys));
+
+            assert(is_string($dictionaryKey);
 
             if (isset($dictionary[$dictionaryKey])) {
                 $model->setRelation(
@@ -239,10 +239,11 @@ abstract class CompositeHasOneOrMany extends Relation
         $foreigns = $this->getForeignKeyNames();
 
         return $results->mapToDictionary(function ($result) use ($foreigns) {
-            /** @var string */
             $key = json_encode(array_map(function ($foreign) use ($result) {
                 return $result->{$foreign};
             }, $foreigns));
+
+            assert(is_string($key));
 
             return [$key => $result];
         })->all();
