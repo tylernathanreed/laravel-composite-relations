@@ -8,27 +8,25 @@ use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 
 /**
  * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
  *
- * @extends CompositeHasOneOrMany<TRelatedModel>
+ * @extends CompositeHasOneOrMany<TRelatedModel,TDeclaringModel,?TRelatedModel>
  */
 class CompositeHasOne extends CompositeHasOneOrMany
 {
-    /** @use SupportsDefaultModels<TRelatedModel> */
     use SupportsDefaultModels;
 
-    /**
-     * Get the results of the relationship.
-     *
-     * @return ?TRelatedModel
-     */
+    /** @inheritDoc */
     public function getResults(): ?Model
     {
         foreach ($this->getParentKeys() as $parentKey) {
             if (is_null($parentKey)) {
+                // @phpstan-ignore return.type (Missing generics on `SupportsDefaultModels`)
                 return $this->getDefaultFor($this->parent);
             }
         }
 
+        // @phpstan-ignore return.type (Missing generics on `SupportsDefaultModels`)
         return $this->query->first() ?: $this->getDefaultFor($this->parent);
     }
 
@@ -48,14 +46,7 @@ class CompositeHasOne extends CompositeHasOneOrMany
         return $models;
     }
 
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     * @param  Collection<int,TRelatedModel>  $results
-     * @param  string  $relation
-     * @return array<int,TRelatedModel>
-     */
+    /** @inheritDoc */
     public function match(array $models, Collection $results, $relation)
     {
         return $this->matchOne($models, $results, $relation);

@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
  *
- * @extends CompositeHasOneOrMany<TRelatedModel>
+ * @extends CompositeHasOneOrMany<TRelatedModel,TDeclaringModel,Collection<int,TRelatedModel>>
  */
 class CompositeHasMany extends CompositeHasOneOrMany
 {
@@ -40,14 +41,7 @@ class CompositeHasMany extends CompositeHasOneOrMany
         return $models;
     }
 
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     * @param  Collection<int,TRelatedModel>  $results
-     * @param  string  $relation
-     * @return array<int,TRelatedModel>
-     */
+    /** @inheritDoc */
     public function match(array $models, Collection $results, $relation)
     {
         return $this->matchMany($models, $results, $relation);

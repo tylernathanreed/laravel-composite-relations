@@ -1,0 +1,12 @@
+services:
+    dev:
+        image: sail-8.4/dev
+        build:
+            context: ./vendor/reedware/sail-lite/runtimes/8.4
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+        volumes:
+            - '.:/var/www/html'

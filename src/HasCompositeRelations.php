@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+// @phpstan-ignore trait.unused (Consumer only)
 trait HasCompositeRelations
 {
     /**

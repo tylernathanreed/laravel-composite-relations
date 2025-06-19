@@ -2,6 +2,7 @@
 
 namespace Reedware\LaravelCompositeRelations;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -252,9 +253,9 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int,string>  $columns
-     * @return TRelatedModel
+     * @return ($id is (Arrayable<array-key,mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)
      */
-    public function findOrNew($id, $columns = ['*']): Model
+    public function findOrNew($id, $columns = ['*'])
     {
         if (is_null($instance = $this->getQuery()->find($id, $columns))) {
             $instance = $this->related->newInstance();
@@ -391,7 +392,16 @@ abstract class CompositeHasOneOrMany extends Relation
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Add the constraints for an internal relationship existence query.
+     *
+     * Essentially, these queries compare on column names like whereColumn.
+     *
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @param  list<string>  $columns
+     * @return Builder<TRelatedModel>
+     */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): Builder
     {
         if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
@@ -414,7 +424,7 @@ abstract class CompositeHasOneOrMany extends Relation
      *
      * @param  Builder<TRelatedModel>  $query
      * @param  Builder<TDeclaringModel>  $parentQuery
-     * @param  array<int,string>  $columns
+     * @param  list<string>  $columns
      * @return Builder<TRelatedModel>
      */
     public function getRelationExistenceQueryForSelfRelation(

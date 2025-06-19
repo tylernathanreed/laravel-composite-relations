@@ -97,10 +97,12 @@ class CompositeBelongsTo extends Relation
     {
         foreach ($this->foreignKeys as $foreignKey) {
             if (is_null($this->child->{$foreignKey})) {
+                // @phpstan-ignore return.type (Missing generics on `SupportsDefaultModels`)
                 return $this->getDefaultFor($this->parent);
             }
         }
 
+        // @phpstan-ignore return.type (Missing generics on `SupportsDefaultModels`)
         return $this->query->first() ?: $this->getDefaultFor($this->parent);
     }
 
