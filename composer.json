@@ -51,10 +51,10 @@
         ],
         "test:static": "phpstan",
         "test:style": "pint --test",
-        "test:style-fix": "pint",
+        "test:style:fix": "pint",
         "test:suite": "phpunit",
         "test": [
-            "@test:style",
+            "@test:style:fix",
             "@test:static",
             "@test:coverage"
         ]
