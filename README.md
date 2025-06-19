@@ -1,6 +1,6 @@
 # Laravel Composite Relations
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-11.x%2F12.x-blue)](https://laravel.com/)
 [![Tests](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/tests.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/tests.yml)
 [![Lint](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/coding-standards.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/coding-standards.yml)
 [![Static Analysis](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/tylernathanreed/laravel-composite-relations/actions/workflows/static-analysis.yml)
@@ -35,6 +35,7 @@ This package is maintained with the latest version of Laravel in mind, but suppo
 
 | Package | Laravel     | PHP        |
 | :-----: | :---------: | :--------: |
+|     5.x | 11.x - 12.x | 8.2 - 8.4+ |
 |     4.x | 10.x - 11.x | 8.1 - 8.3+ |
 |     3.x |  8.x - 10.x | 7.2 - 8.0+ |
 |     2.x |  6.x -  8.x | 7.2 - 8.0+ |
