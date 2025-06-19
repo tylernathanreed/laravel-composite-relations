@@ -16,7 +16,7 @@ class CompositeHasOne extends CompositeHasOneOrMany
 {
     use SupportsDefaultModels;
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function getResults(): ?Model
     {
         foreach ($this->getParentKeys() as $parentKey) {
@@ -46,7 +46,7 @@ class CompositeHasOne extends CompositeHasOneOrMany
         return $models;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function match(array $models, Collection $results, $relation)
     {
         return $this->matchOne($models, $results, $relation);

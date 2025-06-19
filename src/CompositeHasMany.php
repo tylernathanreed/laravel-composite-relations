@@ -41,7 +41,7 @@ class CompositeHasMany extends CompositeHasOneOrMany
         return $models;
     }
 
-    /** @inheritDoc */
+    /** {@inheritDoc} */
     public function match(array $models, Collection $results, $relation)
     {
         return $this->matchMany($models, $results, $relation);
