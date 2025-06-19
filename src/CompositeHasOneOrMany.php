@@ -199,7 +199,7 @@ abstract class CompositeHasOneOrMany extends Relation
                 return $model->getAttribute($localKey);
             }, $this->localKeys));
 
-            assert(is_string($dictionaryKey);
+            assert(is_string($dictionaryKey));
 
             if (isset($dictionary[$dictionaryKey])) {
                 $model->setRelation(
