@@ -10,22 +10,24 @@ use InvalidArgumentException;
 
 /**
  * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @template TResult
  *
- * @extends Relation<TRelatedModel>
+ * @extends Relation<TRelatedModel,TDeclaringModel,TResult>
  */
 abstract class CompositeHasOneOrMany extends Relation
 {
     /**
      * The foreign key of the parent model.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected array $foreignKeys;
 
     /**
      * The local key of the parent model.
      *
-     * @var array<int,string>
+     * @var list<string>
      */
     protected array $localKeys;
 
@@ -45,8 +47,8 @@ abstract class CompositeHasOneOrMany extends Relation
      * Create a new has one or many relationship instance.
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  array<int,string>  $foreignKeys
-     * @param  array<int,string>  $localKeys
+     * @param  list<string>  $foreignKeys
+     * @param  list<string>  $localKeys
      */
     public function __construct(Builder $query, Model $parent, array $foreignKeys, array $localKeys, string $glue)
     {
@@ -96,11 +98,7 @@ abstract class CompositeHasOneOrMany extends Relation
         });
     }
 
-    /**
-     * Set the constraints for an eager load of the relation.
-     *
-     * @param  array<int,TRelatedModel>  $models
-     */
+    /** @inheritDoc */
     public function addEagerConstraints(array $models): void
     {
         // Wrap everything in a "where" clause
@@ -155,10 +153,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their single parents.
      *
-     * @param  array<int,TRelatedModel>  $models
+     * @param  array<int,TDeclaringModel>  $models
      * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
-     * @return array<int,TRelatedModel>
+     * @return array<int,TDeclaringModel>
      */
     public function matchOne(array $models, Collection $results, $relation)
     {
@@ -168,10 +166,10 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array<int,TRelatedModel>  $models
+     * @param  array<int,TDeclaringModel>  $models
      * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
-     * @return array<int,TRelatedModel>
+     * @return array<int,TDeclaringModel>
      */
     public function matchMany(array $models, Collection $results, $relation)
     {
@@ -181,11 +179,11 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array<int,TRelatedModel>  $models
+     * @param  array<int,TDeclaringModel>  $models
      * @param  Collection<int,TRelatedModel>  $results
      * @param  string  $relation
      * @param  'one'|'many'  $type
-     * @return array<int,TRelatedModel>
+     * @return array<int,TDeclaringModel>
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
@@ -393,14 +391,7 @@ abstract class CompositeHasOneOrMany extends Relation
         }
     }
 
-    /**
-     * Add the constraints for a relationship query.
-     *
-     * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<Model>  $parentQuery
-     * @param  array<int,string>  $columns
-     * @return Builder<TRelatedModel>
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']): Builder
     {
         if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
@@ -422,7 +413,7 @@ abstract class CompositeHasOneOrMany extends Relation
      * Add the constraints for a relationship query on the same table.
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<Model>  $parentQuery
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  array<int,string>  $columns
      * @return Builder<TRelatedModel>
      */
@@ -452,7 +443,7 @@ abstract class CompositeHasOneOrMany extends Relation
      * @link https://github.com/tylernathanreed/laravel-relation-joins
      *
      * @param  Builder<TRelatedModel>  $query
-     * @param  Builder<Model>  $parentQuery
+     * @param  Builder<TDeclaringModel>  $parentQuery
      * @param  string  $type
      * @param  string|null  $alias
      * @return Builder<TRelatedModel>
@@ -491,7 +482,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the key value of the parent's local keys.
      *
-     * @return array<int,mixed>
+     * @return list<mixed>
      */
     public function getParentKeys(): array
     {
@@ -503,7 +494,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the fully qualified parent key names.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getQualifiedParentKeyNames(): array
     {
@@ -515,7 +506,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the plain foreign keys.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getForeignKeyNames(): array
     {
@@ -529,7 +520,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the foreign keys for the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getQualifiedForeignKeyNames(): array
     {
@@ -539,7 +530,7 @@ abstract class CompositeHasOneOrMany extends Relation
     /**
      * Get the local key for the relationship.
      *
-     * @return array<int,string>
+     * @return list<string>
      */
     public function getLocalKeyNames(): array
     {
