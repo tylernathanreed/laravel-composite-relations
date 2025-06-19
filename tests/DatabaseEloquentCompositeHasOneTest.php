@@ -21,14 +21,14 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->setUpDatabase();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         m::close();
 
         $this->tearDownDatabase();
     }
 
-    public function testHasOneWithoutDefault()
+    public function test_has_one_without_default()
     {
         $relation = $this->getRelation();
 
@@ -37,7 +37,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testHasOneWithDefault()
+    public function test_has_one_with_default()
     {
         $relation = $this->getRelation()->withDefault();
 
@@ -49,7 +49,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('ABC', $result->task_vendor_name);
     }
 
-    public function testHasOneWithDynamicDefault()
+    public function test_has_one_with_dynamic_default()
     {
         $relation = $this->getRelation()->withDefault(function ($newModel) {
             $newModel->summary = 'go to the store';
@@ -64,7 +64,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('ABC', $result->task_vendor_name);
     }
 
-    public function testHasOneWithArrayDefault()
+    public function test_has_one_with_array_default()
     {
         $relation = $this->getRelation()->withDefault(['summary' => 'go to the store']);
 
@@ -77,7 +77,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('ABC', $result->task_vendor_name);
     }
 
-    public function testMakeMethodDoesNotSaveNewModel()
+    public function test_make_method_does_not_save_new_model()
     {
         $relation = $this->getRelation();
 
@@ -90,7 +90,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('ABC', $result->task_vendor_name);
     }
 
-    public function testSaveMethodSetsForeignKeyOnModel()
+    public function test_save_method_sets_foreign_key_on_model()
     {
         $relation = $this->getRelation();
         $mockModel = $this->getMockBuilder(Model::class)->onlyMethods(['save'])->getMock();
@@ -103,7 +103,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('ABC', $attributes['task_vendor_name']);
     }
 
-    public function testCreateMethodProperlyCreatesNewModel()
+    public function test_create_method_properly_creates_new_model()
     {
         $relation = $this->getRelation();
 
@@ -129,7 +129,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals(true, $instance->exists);
     }
 
-    public function testRelationIsProperlyInitialized()
+    public function test_relation_is_properly_initialized()
     {
         $relation = $this->getRelation();
         $model = m::mock('Illuminate\Database\Eloquent\Model');
@@ -139,7 +139,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals([$model], $models);
     }
 
-    public function testEagerConstraintsAreProperlyAdded()
+    public function test_eager_constraints_are_properly_added()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation();
@@ -164,7 +164,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
+    public function test_eager_constraints_are_properly_added_using_and_glue()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
@@ -189,7 +189,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testModelsAreProperlyMatchedToParents()
+    public function test_models_are_properly_matched_to_parents()
     {
         $relation = $this->getRelation();
 
@@ -229,7 +229,7 @@ class DatabaseEloquentCompositeHasOneTest extends TestCase
         $this->assertEquals('XYZ', $models[2]->foo->task_vendor_name);
     }
 
-    public function testRelationCountQueryCanBeBuilt()
+    public function test_relation_count_query_can_be_built()
     {
         $relation = $this->getRelation(new EloquentTaskModelStub);
 

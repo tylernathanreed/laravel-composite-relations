@@ -20,14 +20,14 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->setUpDatabase();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         m::close();
 
         $this->tearDownDatabase();
     }
 
-    public function testMakeMethodDoesNotSaveNewModel()
+    public function test_make_method_does_not_save_new_model()
     {
         $relation = $this->getRelation();
         $instance = $relation->make(['data_index' => 0, 'data_value' => 'milk']);
@@ -37,7 +37,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals(false, $instance->exists);
     }
 
-    public function testCreateMethodProperlyCreatesNewModel()
+    public function test_create_method_properly_creates_new_model()
     {
         $relation = $this->getRelation();
 
@@ -65,7 +65,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals(true, $instance->exists);
     }
 
-    public function testFindOrNewMethodFindsModelWithForeignKeySet()
+    public function test_find_or_new_method_finds_model_with_foreign_key_set()
     {
         $relation = $this->getRelation();
 
@@ -75,7 +75,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('ABC', $instance->task_vendor_name);
     }
 
-    public function testFirstOrNewMethodFindsFirstModelWithForeignKeySet()
+    public function test_first_or_new_method_finds_first_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -89,7 +89,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('milk', $instance->data_value);
     }
 
-    public function testFirstOrNewMethodWithValuesFindsFirstModelWithForeignKeySet()
+    public function test_first_or_new_method_with_values_finds_first_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -104,7 +104,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('milk', $instance->data_value);
     }
 
-    public function testFirstOrCreateMethodFindsFirstModelWithForeignKeySet()
+    public function test_first_or_create_method_finds_first_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -119,7 +119,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('milk', $instance->data_value);
     }
 
-    public function testFirstOrCreateMethodWithValuesFindsFirstModelWithForeignKeySet()
+    public function test_first_or_create_method_with_values_finds_first_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -134,7 +134,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('milk', $instance->data_value);
     }
 
-    public function testFirstOrCreateMethodCreatesNewModelWithForeignKeySet()
+    public function test_first_or_create_method_creates_new_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -170,7 +170,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
 
     }
 
-    public function testUpdateOrCreateMethodFindsFirstModelAndUpdates()
+    public function test_update_or_create_method_finds_first_model_and_updates()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -201,7 +201,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('carrots', $instance->data_value);
     }
 
-    public function testUpdateOrCreateMethodCreatesNewModelWithForeignKeySet()
+    public function test_update_or_create_method_creates_new_model_with_foreign_key_set()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);
@@ -232,7 +232,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('carrots', $instance->data_value);
     }
 
-    public function testRelationIsProperlyInitialized()
+    public function test_relation_is_properly_initialized()
     {
         $relation = $this->getRelation();
 
@@ -244,7 +244,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals([$model], $models);
     }
 
-    public function testEagerConstraintsAreProperlyAdded()
+    public function test_eager_constraints_are_properly_added()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation();
@@ -269,7 +269,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
+    public function test_eager_constraints_are_properly_added_using_and_glue()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
@@ -294,7 +294,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals(['ABC-001', 'ABC', 0, 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testModelsAreProperlyMatchedToParents()
+    public function test_models_are_properly_matched_to_parents()
     {
         $relation = $this->getRelation();
 
@@ -339,7 +339,7 @@ class DatabaseEloquentCompositeHasManyTest extends TestCase
         $this->assertEquals('XYZ', $models[2]->foo[0]->task_vendor_name);
     }
 
-    public function testCreateManyCreatesARelatedModelForEachRecord()
+    public function test_create_many_creates_a_related_model_for_each_record()
     {
         $parent = EloquentTaskModelStub::find(1);
         $relation = $this->getRelation($parent);

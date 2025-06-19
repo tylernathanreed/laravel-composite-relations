@@ -126,7 +126,6 @@ trait HasCompositeRelations
      * @param  class-string<Model>  $related
      * @param  array<int,string>  $foreignKeys
      * @param  array<int,string>  $ownerKeys
-     * @param  ?string  $relation
      * @return CompositeBelongsTo<Model>
      */
     public function compositeBelongsTo(

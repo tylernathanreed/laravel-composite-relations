@@ -19,14 +19,14 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->setUpDatabase();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         m::close();
 
         $this->tearDownDatabase();
     }
 
-    public function testBelongsToWithoutDefault()
+    public function test_belongs_to_without_default()
     {
         $relation = $this->getRelation();
 
@@ -35,7 +35,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testBelongsToWithDefault()
+    public function test_belongs_to_with_default()
     {
         $relation = $this->getRelation()->withDefault();
 
@@ -45,7 +45,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(false, $result->exists);
     }
 
-    public function testBelongsToWithDynamicDefault()
+    public function test_belongs_to_with_dynamic_default()
     {
         $relation = $this->getRelation()->withDefault(function ($newModel) {
             $newModel->name = 'go shopping';
@@ -58,7 +58,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals('go shopping', $result->name);
     }
 
-    public function testBelongsToWithArrayDefault()
+    public function test_belongs_to_with_array_default()
     {
         $relation = $this->getRelation()->withDefault(['name' => 'go shopping']);
 
@@ -69,7 +69,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals('go shopping', $result->name);
     }
 
-    public function testUpdateMethodRetrievesModelAndUpdates()
+    public function test_update_method_retrieves_model_and_updates()
     {
         $summary = EloquentTaskImportSummaryModelStub::find(1);
 
@@ -80,7 +80,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals('go to the store', $task->name);
     }
 
-    public function testEagerConstraintsAreProperlyAdded()
+    public function test_eager_constraints_are_properly_added()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation();
@@ -98,7 +98,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(['ABC-123', 'ABC', 'XYZ-123', 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testEagerConstraintsAreProperlyAddedUsingAndGlue()
+    public function test_eager_constraints_are_properly_added_using_and_glue()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation(null, 'and');
@@ -116,7 +116,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(['ABC-123', 'ABC', 'XYZ-123', 'XYZ'], $relation->getQuery()->getBindings());
     }
 
-    public function testIdsInEagerConstraintsCanBeZero()
+    public function test_ids_in_eager_constraints_can_be_zero()
     {
         $relation = Relation::noConstraints(function () {
             return $this->getRelation();
@@ -133,7 +133,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals(['ABC-123', 'ABC', '0', 'QWE'], $relation->getQuery()->getBindings());
     }
 
-    public function testRelationIsProperlyInitialized()
+    public function test_relation_is_properly_initialized()
     {
         $relation = $this->getRelation();
         $model = m::mock('Illuminate\Database\Eloquent\Model');
@@ -143,7 +143,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals([$model], $models);
     }
 
-    public function testModelsAreProperlyMatchedToParents()
+    public function test_models_are_properly_matched_to_parents()
     {
         $relation = $this->getRelation();
         $result1 = m::mock('stdClass');
@@ -166,7 +166,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $this->assertEquals('XYZ', $models[1]->foo->getAttribute('vendor_name'));
     }
 
-    public function testAssociateMethodSetsForeignKeyOnModel()
+    public function test_associate_method_sets_foreign_key_on_model()
     {
         $child = m::mock('Illuminate\Database\Eloquent\Model');
         $child->shouldReceive('getAttribute')->once()->with('task_vendor_id')->andReturn('ABC-123');
@@ -185,7 +185,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $relation->associate($parent);
     }
 
-    public function testDissociateMethodUnsetsForeignKeyOnModel()
+    public function test_dissociate_method_unsets_foreign_key_on_model()
     {
         $child = m::mock('Illuminate\Database\Eloquent\Model');
         $child->shouldReceive('getAttribute')->once()->with('task_vendor_id')->andReturn('ABC-123');
@@ -200,7 +200,7 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
         $relation->dissociate();
     }
 
-    public function testAssociateMethodSetsForeignKeyOnModelByIds()
+    public function test_associate_method_sets_foreign_key_on_model_by_ids()
     {
         $child = m::mock('Illuminate\Database\Eloquent\Model');
         $child->shouldReceive('getAttribute')->once()->with('task_vendor_id')->andReturn('ABC-123');
@@ -226,6 +226,4 @@ class DatabaseEloquentCompositeBelongsToTest extends TestCase
     }
 }
 
-class EloquentBelongsToModelStub extends EloquentCompositeRelationModelStub
-{
-}
+class EloquentBelongsToModelStub extends EloquentCompositeRelationModelStub {}

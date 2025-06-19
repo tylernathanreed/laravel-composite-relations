@@ -25,91 +25,91 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->setUpDatabase();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         m::close();
 
         $this->tearDownDatabase();
     }
 
-    public function testCompositeSimpleHasOneRelationJoin()
+    public function test_composite_simple_has_one_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone');
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeSimpleHasOneInverseRelationJoin()
+    public function test_composite_simple_has_one_inverse_relation_join()
     {
         $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('user');
 
         $this->assertEquals('select * from "phones" inner join "users" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeSimpleHasManyRelationJoin()
+    public function test_composite_simple_has_many_relation_join()
     {
         $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('comments');
 
         $this->assertEquals('select * from "posts" inner join "comments" on ("comments"."post_service_name" = "posts"."service_name" and "comments"."post_service_id" = "posts"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeSimpleHasManyInverseRelationJoin()
+    public function test_composite_simple_has_many_inverse_relation_join()
     {
         $builder = (new EloquentCommentModelStub)->newQuery()->joinRelation('post');
 
         $this->assertEquals('select * from "comments" inner join "posts" on ("comments"."post_service_name" = "posts"."service_name" and "comments"."post_service_id" = "posts"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeHasOneUsingAliasRelationJoin()
+    public function test_composite_has_one_using_alias_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('phone as telephones');
 
         $this->assertEquals('select * from "users" inner join "phones" as "telephones" on ("telephones"."user_vendor_name" = "users"."vendor_name" and "telephones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeHasOneInverseUsingAliasRelationJoin()
+    public function test_composite_has_one_inverse_using_alias_relation_join()
     {
         $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('user as contacts');
 
         $this->assertEquals('select * from "phones" inner join "users" as "contacts" on ("phones"."user_vendor_name" = "contacts"."vendor_name" and "phones"."user_vendor_id" = "contacts"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeHasManyUsingAliasRelationJoin()
+    public function test_composite_has_many_using_alias_relation_join()
     {
         $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('comments as feedback');
 
         $this->assertEquals('select * from "posts" inner join "comments" as "feedback" on ("feedback"."post_service_name" = "posts"."service_name" and "feedback"."post_service_id" = "posts"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeHasManyInverseUsingAliasRelationJoin()
+    public function test_composite_has_many_inverse_using_alias_relation_join()
     {
         $builder = (new EloquentCommentModelStub)->newQuery()->joinRelation('post as article');
 
         $this->assertEquals('select * from "comments" inner join "posts" as "article" on ("comments"."post_service_name" = "article"."service_name" and "comments"."post_service_id" = "article"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeParentSoftDeletesHasOneRelationJoin()
+    public function test_composite_parent_soft_deletes_has_one_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('phone');
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") where "users"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeParentSoftDeletesHasOneWithTrashedRelationJoin()
+    public function test_composite_parent_soft_deletes_has_one_with_trashed_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('phone')->withTrashed();
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeChildSoftDeletesHasOneRelationJoin()
+    public function test_composite_child_soft_deletes_has_one_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('softDeletingPhone');
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") and "phones"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeChildSoftDeletesHasOneWithTrashedRelationJoin()
+    public function test_composite_child_soft_deletes_has_one_with_trashed_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
@@ -118,21 +118,21 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeParentAndChildSoftDeletesHasOneRelationJoin()
+    public function test_composite_parent_and_child_soft_deletes_has_one_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone');
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") and "phones"."deleted_at" is null where "users"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeParentAndChildSoftDeletesHasOneWithTrashedParentRelationJoin()
+    public function test_composite_parent_and_child_soft_deletes_has_one_with_trashed_parent_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone')->withTrashed();
 
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") and "phones"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeParentAndChildSoftDeletesHasOneWithTrashedChildRelationJoin()
+    public function test_composite_parent_and_child_soft_deletes_has_one_with_trashed_child_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
@@ -141,7 +141,7 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") where "users"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeParentAndChildSoftDeletesHasOneWithTrashedRelationJoin()
+    public function test_composite_parent_and_child_soft_deletes_has_one_with_trashed_relation_join()
     {
         $builder = (new EloquentSoftDeletingUserModelStub)->newQuery()->withTrashed()->joinRelation('softDeletingPhone', function ($join) {
             $join->withTrashed();
@@ -150,49 +150,49 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals('select * from "users" inner join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeParentSoftSimpleHasOneInverseRelationJoin()
+    public function test_composite_parent_soft_simple_has_one_inverse_relation_join()
     {
         $builder = (new EloquentPhoneModelStub)->newQuery()->joinRelation('softDeletingUser');
 
         $this->assertEquals('select * from "phones" inner join "users" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") and "users"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeChildSoftSimpleHasOneInverseRelationJoin()
+    public function test_composite_child_soft_simple_has_one_inverse_relation_join()
     {
         $builder = (new EloquentSoftDeletingPhoneModelStub)->newQuery()->joinRelation('user');
 
         $this->assertEquals('select * from "phones" inner join "users" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id") where "phones"."deleted_at" is null', $builder->toSql());
     }
 
-    public function testCompositeBelongsToSelfRelationJoin()
+    public function test_composite_belongs_to_self_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('manager');
 
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on ("users"."manager_vendor_name" = "self_alias_hash"."vendor_name" and "users"."manager_vendor_id" = "self_alias_hash"."vendor_id")', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
     }
 
-    public function testCompositeBelongsToSelfUsingAliasRelationJoin()
+    public function test_composite_belongs_to_self_using_alias_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('manager as managers');
 
         $this->assertEquals('select * from "users" inner join "users" as "managers" on ("users"."manager_vendor_name" = "managers"."vendor_name" and "users"."manager_vendor_id" = "managers"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeHasManySelfRelationJoin()
+    public function test_composite_has_many_self_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employees');
 
         $this->assertEquals('select * from "users" inner join "users" as "self_alias_hash" on ("self_alias_hash"."user_vendor_name" = "users"."vendor_name" and "self_alias_hash"."user_vendor_id" = "users"."vendor_id")', preg_replace('/\b(laravel_reserved_\d)(\b|$)/i', 'self_alias_hash', $builder->toSql()));
     }
 
-    public function testCompositeHasManySelfUsingAliasRelationJoin()
+    public function test_composite_has_many_self_using_alias_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('employees as employees');
 
         $this->assertEquals('select * from "users" inner join "users" as "employees" on ("employees"."user_vendor_name" = "users"."vendor_name" and "employees"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeThroughJoinForHasManyRelationJoin()
+    public function test_composite_through_join_for_has_many_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
@@ -204,49 +204,49 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
-    public function testCompositeLeftHasOneRelationJoin()
+    public function test_composite_left_has_one_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->leftJoinRelation('phone');
 
         $this->assertEquals('select * from "users" left join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeLeftHasOneInverseRelationJoin()
+    public function test_composite_left_has_one_inverse_relation_join()
     {
         $builder = (new EloquentPhoneModelStub)->newQuery()->leftJoinRelation('user');
 
         $this->assertEquals('select * from "phones" left join "users" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeLeftHasManyRelationJoin()
+    public function test_composite_left_has_many_relation_join()
     {
         $builder = (new EloquentPostModelStub)->newQuery()->leftJoinRelation('comments');
 
         $this->assertEquals('select * from "posts" left join "comments" on ("comments"."post_service_name" = "posts"."service_name" and "comments"."post_service_id" = "posts"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeLeftHasManyInverseRelationJoin()
+    public function test_composite_left_has_many_inverse_relation_join()
     {
         $builder = (new EloquentCommentModelStub)->newQuery()->leftJoinRelation('post');
 
         $this->assertEquals('select * from "comments" left join "posts" on ("comments"."post_service_name" = "posts"."service_name" and "comments"."post_service_id" = "posts"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeRightHasOneRelationJoin()
+    public function test_composite_right_has_one_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->rightJoinRelation('phone');
 
         $this->assertEquals('select * from "users" right join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeCrossHasOneRelationJoin()
+    public function test_composite_cross_has_one_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->crossJoinRelation('phone');
 
         $this->assertEquals('select * from "users" cross join "phones" on ("phones"."user_vendor_name" = "users"."vendor_name" and "phones"."user_vendor_id" = "users"."vendor_id")', $builder->toSql());
     }
 
-    public function testCompositeLeftThroughJoinForHasManyRelationJoin()
+    public function test_composite_left_through_join_for_has_many_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
@@ -258,7 +258,7 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
-    public function testCompositeRightThroughJoinForHasManyRelationJoin()
+    public function test_composite_right_through_join_for_has_many_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
@@ -270,7 +270,7 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
-    public function testCompositeCrossThroughJoinForHasManyRelationJoin()
+    public function test_composite_cross_through_join_for_has_many_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts', function ($join) {
             $join->where('posts.is_active', '=', 1);
@@ -282,21 +282,21 @@ class DatabaseEloquentCompositeRelationJoinTest extends TestCase
         $this->assertEquals([0 => 1], $builder->getBindings());
     }
 
-    public function testCompositeMultipleAliasesForBelongsToRelationJoin()
+    public function test_composite_multiple_aliases_for_belongs_to_relation_join()
     {
         $builder = (new EloquentPostModelStub)->newQuery()->joinRelation('user as authors.country as nations');
 
         $this->assertEquals('select * from "posts" inner join "users" as "authors" on ("posts"."user_vendor_name" = "authors"."vendor_name" and "posts"."user_vendor_id" = "authors"."vendor_id") inner join "countries" as "nations" on ("authors"."country_planet_name" = "nations"."planet_name" and "authors"."country_planet_id" = "nations"."planet_id")', $builder->toSql());
     }
 
-    public function testCompositeMultipleAliasesForHasManyRelationJoin()
+    public function test_composite_multiple_aliases_for_has_many_relation_join()
     {
         $builder = (new EloquentUserModelStub)->newQuery()->joinRelation('posts as articles.comments as reviews');
 
         $this->assertEquals('select * from "users" inner join "posts" as "articles" on ("articles"."user_vendor_name" = "users"."vendor_name" and "articles"."user_vendor_id" = "users"."vendor_id") inner join "comments" as "reviews" on ("reviews"."article_service_name" = "articles"."service_name" and "reviews"."article_service_id" = "articles"."service_id")', $builder->toSql());
     }
 
-    public function testCompositeHasManyUsingLocalScopeRelationJoin()
+    public function test_composite_has_many_using_local_scope_relation_join()
     {
         $builder = (new EloquentCountryModelStub)->newQuery()->joinRelation('users', function ($join) {
             $join->active();
