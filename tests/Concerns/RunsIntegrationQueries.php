@@ -3,7 +3,9 @@
 namespace Reedware\LaravelCompositeRelations\Tests\Concerns;
 
 use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use Illuminate\Database\Schema\Builder;
 use Reedware\LaravelCompositeRelations\Tests\EloquentTaskModelStub;
 
 trait RunsIntegrationQueries
@@ -11,7 +13,7 @@ trait RunsIntegrationQueries
     /**
      * The database connection implementation.
      *
-     * @var \Illuminate\Database\Connection
+     * @var Connection
      */
     protected $db;
 
@@ -132,7 +134,7 @@ trait RunsIntegrationQueries
     /**
      * Get a schema builder instance.
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return Builder
      */
     protected function schema()
     {
@@ -142,7 +144,7 @@ trait RunsIntegrationQueries
     /**
      * Get a database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function connection()
     {
